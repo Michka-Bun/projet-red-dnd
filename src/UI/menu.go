@@ -15,7 +15,7 @@ func Menu() {
 		println("\033[35m4. \033[9mBlacksmith\033[0m")
 		println("\033[31m5. Exit\033[0m")
 		print("Choose an option: ")
-²
+
 		var choice int
 		fmt.Scanln(&choice)
 
@@ -50,7 +50,7 @@ func Menu() {
 func accessShop() {
 	for {
 		const maxBackpackLevel = 3
-		// fmt.Println("You have \033[33m50" Player.gold "gold\033[0m.")  IMPLEMENT THE PLAYER'S GOLD
+		fmt.Println("You have \033[33m", Player.gold, "gold\033[0m.")
 		fmt.Println("Here is what the shop has to offer:")
 		fmt.Println("-----------------------------------")
 		fmt.Println("1. Health potion \t\t: \033[33m3 \tgold\033[0m")
@@ -131,7 +131,7 @@ func accessShop() {
 				Player.gold -= 30
 				fmt.Println("You bought a Backpack upgrade.")
 				Player.BackpackLevel++
-				
+
 			} else {
 				fmt.Println("You don't have enough gold.")
 			}
