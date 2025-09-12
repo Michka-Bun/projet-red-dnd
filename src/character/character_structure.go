@@ -1,24 +1,19 @@
-package main
+package projet_red_dnd
 
 import (
 	"fmt"
 )
 
-func main() {
-	setInfo()
-
-}
-
-func setInfo() string {
+func SetInfo() {
 	//Nom (Fonctionnel)
-	var inputName string
+	inputName := ""
 	fmt.Print("Écris le nom de ton nouveau personnage : ")
 	fmt.Scan(&inputName)
 	for i := 0; i <= 20; i++ {
 		fmt.Println()
 	}
-	var ComptInvalidName = 1
-	Name := ""
+	ComptInvalidName := 1
+	var Name string
 	for VerifName := 0; VerifName < len(inputName); VerifName++ {
 		if (inputName[VerifName] >= 'A' && inputName[VerifName] <= 'Z') || (inputName[VerifName] >= 'a' && inputName[VerifName] <= 'z') || inputName[VerifName] == ' ' {
 			Name = inputName
@@ -36,8 +31,8 @@ func setInfo() string {
 	}
 
 	//Classe (fonctionnel)
-	var inputClass string
-	Class := ""
+	inputClass := ""
+	var Class string
 	for ComptInvalidClass := 1; !(Class == "Guerrier" || Class == "Mage"); ComptInvalidClass++ {
 		fmt.Println("Choisis la classe de ton personnage :")
 		fmt.Println("1 - Guerrier")
@@ -58,21 +53,21 @@ func setInfo() string {
 	}
 
 	//stats en fonction de la classe
-	HPmax := 0
-	HP := 0
-	Level := 1
-	InventorySlot := 0
+	var HPmax int
+	var HP int
+	var Level int
+	var InventorySlot []string
 	switch Class {
 	case "Guerrier":
 		HPmax = 100
 		HP = 100
 		Level = 1
-		InventorySlot = 5
+		InventorySlot = []string{}
 	case "Mage":
 		HPmax = 75
 		HP = 75
 		Level = 1
-		InventorySlot = 10
+		InventorySlot = []string{}
 	}
 
 	//retour d'infos
@@ -86,12 +81,30 @@ func setInfo() string {
 	fmt.Println("HP :", HP)
 	fmt.Println("Level :", Level)
 	fmt.Println("Inventory slots :", InventorySlot)
-
-	return ""
 }
 
-/*
-func displayInfo() {
+func DisplayInfo(
+	Name string,
+	Class string,
+	HPmax int,
+	HP int,
+	Level int,
+	InventorySlot int) {
 
+	fmt.Println("Informations de votre nouveau personnage :")
+	fmt.Println("Name :", Name)
+	fmt.Println("Class :", Class)
+	fmt.Println("HP max :", HPmax)
+	fmt.Println("HP :", HP)
+	fmt.Println("Level :", Level)
+	fmt.Println("Inventory slots :", InventorySlot)
 }
-*/
+
+type Player struct {
+	name          string
+	Class         string
+	HPmax         int
+	HP            int
+	Level         int
+	InventorySlot int
+}
