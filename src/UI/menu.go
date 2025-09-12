@@ -38,7 +38,7 @@ func Menu() {
 			println("\033[35mBlacksmith selected.\033[0m")
 		case 5:
 			clearScreen()
-			println("\033[31mExiting the game. Goodbye!\033[0m")
+			println("\033[31m\033[1mExiting the game.\033[0m")
 			os.Exit(0)
 		default:
 			clearScreen()
@@ -48,22 +48,29 @@ func Menu() {
 }
 
 func accessShop() {
+	lastMsg := ""
 	for {
+		clearScreen()
+		if lastMsg != "" {
+			fmt.Println(lastMsg)
+			fmt.Println()
+			lastMsg = ""
+		}
 		const maxBackpackLevel = 3
-		fmt.Println("You have \033[33m", Player.gold, "gold\033[0m.")
+		fmt.Println("You have \033[33m\033[1m", Player.gold, "gold\033[0m.")
 		fmt.Println("Here is what the shop has to offer:")
 		fmt.Println("-----------------------------------")
-		fmt.Println("1. Health potion \t\t: \033[33m3 \tgold\033[0m")
-		fmt.Println("2. Poison potion \t\t: \033[33m6 \tgold\033[0m")
-		fmt.Println("3. Spell book \t: \033[31m\033[1mFireball\033[0m \t: \033[33m25 \tgold\033[0m")
-		fmt.Println("4. Wolf fur \t\t\t: \033[33m4 \tgold\033[0m")
-		fmt.Println("5. Troll leather \t\t: \033[33m7 \tgold\033[0m")
-		fmt.Println("6. Boar leather \t\t: \033[33m3 \tgold\033[0m")
-		fmt.Println("7. Crow feather \t\t: \033[33m1 \tgold\033[0m")
+		fmt.Println("1. Health potion \t\t: \033[33m\033[1m3 \tgold\033[0m")
+		fmt.Println("2. Poison potion \t\t: \033[33m\033[1m6 \tgold\033[0m")
+		fmt.Println("3. Spell book \t: \033[31m\033[1mFireball\033[0m \t: \033[33m\033[1m25 \tgold\033[0m")
+		fmt.Println("4. Wolf fur \t\t\t: \033[33m\033[1m4 \tgold\033[0m")
+		fmt.Println("5. Troll leather \t\t: \033[33m\033[1m7 \tgold\033[0m")
+		fmt.Println("6. Boar leather \t\t: \033[33m\033[1m3 \tgold\033[0m")
+		fmt.Println("7. Crow feather \t\t: \033[33m\033[1m1 \tgold\033[0m")
 		if Player.BackpackLevel < maxBackpackLevel {
-			fmt.Println("8. Backpack upgrade \t\t: \033[33m30 \tgold\033[0m")
+			fmt.Println("8. Backpack upgrade \t\t: \033[33m30\033[1m \tgold\033[0m")
 		} else {
-			fmt.Println("8. \033[9mBackpack upgrade\033[0m \t\t: \033[31mMAX CAPACITY REACHED\033[0m")
+			fmt.Println("8. \033[9mBackpack upgrade\033[0m \t\t: \033[31m\033[1mMAX CAPACITY REACHED\033[0m")
 		}
 		fmt.Println("-----------------------------------")
 		fmt.Println("9. Exit shop")
@@ -76,73 +83,159 @@ func accessShop() {
 		case 1:
 			if Player.gold >= 3 {
 				Player.gold -= 3
-				fmt.Println("You bought a Health potion.")
+				lastMsg = "You bought a Health potion."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 2:
 			if Player.gold >= 6 {
 				Player.gold -= 6
-				fmt.Println("You bought a Poison potion.")
+				lastMsg = "You bought a Poison potion."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 3:
 			if Player.gold >= 25 {
 				Player.gold -= 25
-				fmt.Println("You bought a Spell book : Fireball.")
+				lastMsg = "You bought a Spell book : Fireball."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 4:
 			if Player.gold >= 4 {
 				Player.gold -= 4
-				fmt.Println("You bought a Wolf fur.")
+				lastMsg = "You bought a Wolf fur."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 5:
 			if Player.gold >= 7 {
 				Player.gold -= 7
-				fmt.Println("You bought a Troll leather.")
+				lastMsg = "You bought a Troll leather."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 6:
 			if Player.gold >= 3 {
 				Player.gold -= 3
-				fmt.Println("You bought a Boar leather.")
+				lastMsg = "You bought a Boar leather."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 7:
 			if Player.gold >= 1 {
 				Player.gold -= 1
-				fmt.Println("You bought a Crow feather.")
+				lastMsg = "You bought a Crow feather."
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 8:
 			if Player.BackpackLevel >= maxBackpackLevel {
-				fmt.Println("Your backpack is already at maximum capacity.")
+				lastMsg = "Your backpack is already at maximum capacity."
 				break
 			}
 			if Player.gold >= 30 {
 				Player.gold -= 30
-				fmt.Println("You bought a Backpack upgrade.")
+				lastMsg = "You bought a Backpack upgrade."
 				Player.BackpackLevel++
 
 			} else {
-				fmt.Println("You don't have enough gold.")
+				lastMsg = "You don't have enough gold."
 			}
 		case 9:
 			clearScreen()
 			fmt.Println("Exiting the shop.")
 			return
 		default:
-			clearScreen()
-			fmt.Println("Invalid choice, please try again.")
+			lastMsg = "Invalid choice, please try again."
 		}
+	}
+}
+
+func blacksmith() {
+	lastMsg := ""
+	for {
+		clearScreen()
+		if lastMsg != "" {
+			fmt.Println(lastMsg)
+			fmt.Println()
+			lastMsg = ""
+		}
+		fmt.Println("You have :\n- \033[33m\033[1m", Player.gold, "gold\033[0m\n- \033[35m\033[1m", Player.CrowFeather, "Crow feather(s)\033[0m\n- \033[35m\033[1m", Player.BoarLeather, "Boar leather(s)\033[0m\n- \033[35m\033[1m", Player.WolfFur, "Wolf fur(s)\033[0m\n- \033[35m\033[1m", Player.TrollLeather, "Troll leather(s)\033[0m")
+		fmt.Println("Welcome to the Blacksmith!")
+		fmt.Println("Here is what the Blacksmith has to offer:")
+		fmt.Println("-----------------------------------")
+		fmt.Println("1. Adventurer's hat \t\t: \033[33m\033[1m5 \tgold\033[0m | \033[35m1 \tCrow feather\033[0m | \033[35m1 \tBoar leather\033[0m |")
+		fmt.Println("2. Adventurer's tunic \t\t: \033[33m\033[1m5 \tgold\033[0m | \033[35m2 \tWolf fur\033[0m | \033[35m1 \tTroll leather\033[0m |")
+		fmt.Println("3. Adventurer's boots \t\t: \033[33m\033[1m5 \tgold\033[0m | \033[35m1 \tWolf fur\033[0m | \033[35m1 \tBoar leather\033[0m |")
+		fmt.Println("-----------------------------------")
+		fmt.Println("4. Exit Blacksmith")
+		fmt.Print("Choose an option: ")
+
+		var choice int
+		fmt.Scanln(&choice)
+
+		switch choice {
+		case 1:
+			if Player.gold >= 5 && Player.CrowFeather >= 1 && Player.BoarLeather >= 1 {
+				Player.gold -= 5
+				Player.CrowFeather -= 1
+				Player.BoarLeather -= 1
+				lastMsg = "You bought an Adventurer's hat."
+			} else {
+				lastMsg = "You don't have enough gold or materials."
+			}
+		case 2:
+			if Player.gold >= 5 && Player.WolfFur >= 2 && Player.TrollLeather >= 1 {
+				Player.gold -= 5
+				Player.WolfFur -= 2
+				Player.TrollLeather -= 1
+				lastMsg = "You bought an Adventurer's tunic."
+			} else {
+				lastMsg = "You don't have enough gold or materials."
+			}
+		case 3:
+			if Player.gold >= 5 && Player.WolfFur >= 1 && Player.BoarLeather >= 1 {
+				Player.gold -= 5
+				Player.WolfFur -= 1
+				Player.BoarLeather -= 1
+				lastMsg = "You bought an Adventurer's boots."
+			} else {
+				lastMsg = "You don't have enough gold or materials."
+			}
+		case 4:
+			clearScreen()
+			fmt.Println("Exiting the Blacksmith.")
+			return
+		default:
+			lastMsg = "Invalid choice, please try again."
+		}
+	}
+}
+
+func fightMenu() {
+	isFighting = true
+	clearScreen()
+	// displayEnemyInfo()
+	// displayPlayerInfo()
+
+	// fight options
+	println("Fight Menu:")
+	println("-------------------")
+	println("1. \033[31mAttack\033[0m")
+	println("2. \033[32mInventory\033[0m")
+	print("Choose an option: ")
+
+	var choice int
+	fmt.Scanln(&choice)
+
+	switch choice {
+	case 1:
+		//attack()
+	case 2:
+		// accessInventory()
+	default:
+		fmt.Println("Invalid choice, please try again.")
 	}
 }
 
