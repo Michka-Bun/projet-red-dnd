@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	projet_red_dnd "projet-red-dnd/character"
+	projet_red_dnd "projet_red_dnd/src/character"
 )
 
 func main() {

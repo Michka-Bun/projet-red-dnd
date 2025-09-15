@@ -1,6 +1,6 @@
 package UI
 
-import (
+/*import (
 	"fmt"
 	"os"
 )
@@ -243,3 +243,4 @@ func fightMenu() {
 func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
+*/
