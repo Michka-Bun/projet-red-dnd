@@ -1,13 +1,12 @@
-package UI
+package dnd
 
 import (
-	"fmt"
-	"os"
-	character "projet-red-dnd/character"
+    "fmt"
+    "os"
 )
 
 // main menu function
-func Menu(p character.Player) {
+func Menu(p Player) {
 	lastMsg := ""
 	for {
 		ClearScreen()
@@ -31,7 +30,7 @@ func Menu(p character.Player) {
 		switch choice {
 		case 1:
 			ClearScreen()
-			character.DisplayInfo(p)
+            DisplayInfo(p)
 			fmt.Println()
 			fmt.Print("Press Enter to return to menu...")
 			var _pause byte
@@ -40,7 +39,7 @@ func Menu(p character.Player) {
 		case 2:
 			ClearScreen()
 			fmt.Println("Inventory:")
-			character.AccessInventory(p)
+            AccessInventory(p)
 			fmt.Println()
 			fmt.Print("Press Enter to return to menu...")
 			var _pause2 byte

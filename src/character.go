@@ -1,6 +1,4 @@
-package character
-
-//package main
+package dnd
 
 import (
 	"fmt"
@@ -19,8 +17,8 @@ type Player struct {
 
 /*
 func main() {
-	player := SetInfo()
-	DisplayInfo(player)
+    player := SetInfo()
+    DisplayInfo(player)
 }
 */
 
