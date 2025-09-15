@@ -1,4 +1,4 @@
-package projet_red_dnd
+package character
 
 //package main
 
@@ -27,11 +27,11 @@ func main() {
 func SetInfo() Player {
 	//Nom (Fonctionnel)
 	var inputName string
-	fmt.Print("Écris le nom de ton nouveau personnage : ")
+	fmt.Print("Write the name of your new character: ")
 	fmt.Scan(&inputName)
 
 	// Nettoyage console
-	fmt.Println(strings.Repeat("\n", 21))
+	fmt.Print("\033[2J\033[3J\033[H")
 
 	ComptInvalidName := 1
 	var Name string
@@ -49,7 +49,7 @@ func SetInfo() Player {
 			Name = inputName
 		} else {
 			fmt.Println("// Invalid Name // x", ComptInvalidName)
-			fmt.Println("Choissis un autre nom :")
+			fmt.Println("Choose another name:")
 			fmt.Scan(&inputName)
 			ComptInvalidName++
 			fmt.Println(strings.Repeat("\n", 21))
@@ -60,15 +60,15 @@ func SetInfo() Player {
 	var inputClass string
 	var Class string
 	ComptInvalidClass := 1
-	for !(Class == "Guerrier" || Class == "Mage") {
-		fmt.Println("Choisis la classe de ton personnage :")
-		fmt.Println("1 - Guerrier")
+	for !(Class == "Warrior" || Class == "Mage") {
+		fmt.Println("Choose your character's class:")
+		fmt.Println("1 - Warrior")
 		fmt.Println("2 - Mage")
 		fmt.Scan(&inputClass)
 		fmt.Println(strings.Repeat("\n", 21))
 
 		if inputClass == "1" {
-			Class = "Guerrier"
+			Class = "Warrior"
 		} else if inputClass == "2" {
 			Class = "Mage"
 		} else {
@@ -81,7 +81,7 @@ func SetInfo() Player {
 	var HPmax, HP, Level int
 	var InventorySlot int
 	var Inventory []string
-	if Class == "Guerrier" {
+	if Class == "Warrior" {
 		HPmax = 100
 		HP = 100
 		Level = 1
@@ -97,14 +97,14 @@ func SetInfo() Player {
 
 	//retour d'infos
 	fmt.Println(strings.Repeat("\n", 21))
-	fmt.Println("Informations de votre nouveau personnage :")
-	fmt.Println("Name :", Name)
-	fmt.Println("Class :", Class)
-	fmt.Println("HP max :", HPmax)
-	fmt.Println("HP :", HP)
-	fmt.Println("Level :", Level)
+	fmt.Println("Informations on your new character:")
+	fmt.Println("Name \t\t:", Name)
+	fmt.Println("Class \t\t:", Class)
+	fmt.Println("HP max \t\t:", HPmax)
+	fmt.Println("HP \t\t:", HP)
+	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Inventory slots :", InventorySlot)
-	fmt.Println("Inventory items : Empty")
+	fmt.Println("Inventory items :", Inventory)
 
 	return Player{
 		Name:          Name,
@@ -118,12 +118,13 @@ func SetInfo() Player {
 }
 
 func DisplayInfo(p Player) {
-	fmt.Println("Informations de votre nouveau personnage :")
-	fmt.Println("Name :", p.Name)
-	fmt.Println("Class :", p.Class)
-	fmt.Println("HP max :", p.HPmax)
-	fmt.Println("HP :", p.HP)
-	fmt.Println("Level :", p.Level)
+	fmt.Println("Informations on your character:")
+	fmt.Println("------------------------------")
+	fmt.Println("Name \t\t:", p.Name)
+	fmt.Println("Class \t\t:", p.Class)
+	fmt.Println("HP max \t\t:", p.HPmax)
+	fmt.Println("HP \t\t:", p.HP)
+	fmt.Println("Level \t\t:", p.Level)
 	fmt.Println("Inventory slots :", p.InventorySlot)
 	fmt.Println("Inventory items :", p.Inventory)
 }
