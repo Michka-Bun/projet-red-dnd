@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
-	"projet-red-dnd/UI"
+	UI "projet-red-dnd/UI"
+	character "projet-red-dnd/character"
 )
 
 func main() {
-	fmt.Println("Welcome to the RPG Game!")
-	for {
-		UI.Menu()
-	}
+	UI.ClearScreen()
+	fmt.Println("Welcome to the Game!")
+	p := character.SetInfo()
+	UI.ClearScreen()
+	fmt.Println("-------------------")
+	UI.Menu(p)
 }
