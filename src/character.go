@@ -13,6 +13,7 @@ type Player struct {
 	Level         int
 	InventorySlot int
 	Inventory     []string
+	PoisonEffect  int
 }
 
 /*
@@ -92,6 +93,8 @@ func SetInfo() Player {
 		InventorySlot = 10
 		Inventory = []string{}
 	}
+	//Autres infos
+	var PoisonEffect int
 
 	//retour d'infos
 	fmt.Println(strings.Repeat("\n", 21))
@@ -112,6 +115,7 @@ func SetInfo() Player {
 		Level:         Level,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
+		PoisonEffect:  PoisonEffect,
 	}
 }
 
@@ -125,6 +129,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("Level \t\t:", p.Level)
 	fmt.Println("Inventory slots :", p.InventorySlot)
 	fmt.Println("Inventory items :", p.Inventory)
+	fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)")
 }
 
 func AccessInventory(p Player) {
