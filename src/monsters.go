@@ -57,7 +57,7 @@ func DisplayMonsterInfo(m Monster) {
 	fmt.Println("Base damage \t:", m.BaseDamage)
 	fmt.Println("Level \t\t:\033[36m\033[1m", m.Level, "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", MonsterHPColor(m), m.HP, MonsterHPBar(m))
-	fmt.Println("Poison effect for \t:", m.PoisonEffect, "turn(s)")
+	fmt.Println("Poison effect \t:", m.PoisonEffect, "\t turn(s) left")
 }
 
 func MonsterHPBar(m Monster) string {
@@ -76,25 +76,25 @@ func MonsterHPBar(m Monster) string {
 	bar := fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat(" ", barLength-filled))
 
 	pct := m.HP * 100 / m.HPmax
-	color := "\033[31m"
+	color := "\033[31m" //rouge
 	if pct > 66 {
-		color = "\033[32m"
-	} else if pct > 33 && pct < 66 {
-		color = "\033[33m"
+		color = "\033[32m" //vert
+	} else if pct > 33 && pct <= 66 {
+		color = "\033[33m" //jaune
 	}
 	return color + bar + "\033[0m"
 }
 
 // hpColor returns the ANSI color code for the current HP percentage.
 func MonsterHPColor(m Monster) string {
-	if m.HPmax <= 0 {
-		return "\033[31m"
+	if m.HPmax < 0 {
+		return "\033[31m" //rouge
 	}
 	pct := m.HP * 100 / m.HPmax
-	if pct > 66 {
-		return "\033[32m"
-	} else if pct > 33 && pct < 66 {
-		return "\033[33m"
+	if pct >= 66 {
+		return "\033[32m" // vert
+	} else if pct > 33 && pct <= 66 {
+		return "\033[33m" //jaune
 	}
-	return "\033[31m"
+	return "\033[31m" //rouge
 }

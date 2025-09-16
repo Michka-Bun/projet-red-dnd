@@ -138,12 +138,12 @@ func DisplayInfo(p Player) {
 	fmt.Println("Class \t\t:", p.Class)
 	fmt.Println("HP max \t\t:", p.HPmax)
 	fmt.Println("Base damage \t:", p.BaseDamage)
-	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
-	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
+	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")   //bleu clair
+	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m") //jaune
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", HPColor(p), p.HP, HPBar(p))
-	fmt.Println("Poison effect \t:", p.PoisonEffect, "turn(s) left")
+	fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
 }
 
 func AddItem(p *Player, name string, count int) bool {
@@ -202,11 +202,11 @@ func HPBar(p Player) string {
 	bar := fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat(" ", barLength-filled))
 
 	pct := p.HP * 100 / p.HPmax
-	color := "\033[31m"
+	color := "\033[31m" //rouge
 	if pct > 66 {
-		color = "\033[32m"
-	} else if pct > 33 && pct < 66 {
-		color = "\033[33m"
+		color = "\033[32m" //vert
+	} else if pct > 33 && pct <= 66 {
+		color = "\033[33m" //jaune
 	}
 	return color + bar + "\033[0m"
 }
@@ -214,13 +214,13 @@ func HPBar(p Player) string {
 // hpColor returns the ANSI color code for the current HP percentage.
 func HPColor(p Player) string {
 	if p.HPmax <= 0 {
-		return "\033[31m"
+		return "\033[31m" //rouge
 	}
 	pct := p.HP * 100 / p.HPmax
 	if pct > 66 {
-		return "\033[32m"
-	} else if pct > 33 && pct < 66 {
-		return "\033[33m"
+		return "\033[32m" //vert
+	} else if pct > 33 && pct <= 66 {
+		return "\033[33m" //jaune
 	}
-	return "\033[31m"
+	return "\033[31m" //rouge
 }

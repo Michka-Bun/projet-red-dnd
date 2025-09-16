@@ -12,4 +12,9 @@ func main() {
 	dnd.ClearScreen()
 	fmt.Println("-------------------")
 	dnd.Menu(&p)
+
+	/* // Test affichage stats monstre
+	m := dnd.ChooseMonster()
+	dnd.DisplayMonsterInfo(m)
+	*/
 }
