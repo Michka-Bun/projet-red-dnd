@@ -2,6 +2,7 @@ package dnd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -17,6 +18,9 @@ type Player struct {
 	Inventory     map[string]int
 	Skills        map[string]bool
 	PoisonEffect  int
+	Head          string
+	Body          string
+	Feet          string
 }
 
 /*
@@ -133,16 +137,16 @@ func SetInfo() Player {
 func DisplayInfo(p Player) {
 	fmt.Println("Informations on your character:")
 	fmt.Println("------------------------------")
-	fmt.Println("Name \t\t:", p.Name)
-	fmt.Println("Class \t\t:", p.Class)
-	fmt.Println("HP max \t\t:", p.HPmax)
+	fmt.Println("Name \t\t:\033[97m", p.Name, "\033[0m")
+	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
+	fmt.Println("HP max \t\t:\033[97m", p.HPmax, "\033[0m")
 	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
-	fmt.Println("Skills \t\t:", formatSkills(p.Skills))
+	fmt.Println("Skills \t\t:\033[34m", formatSkills(p.Skills), "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
-	// fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)") not sure
+	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
 }
 
 func AddItem(p *Player, name string, count int) bool {
@@ -156,6 +160,26 @@ func AddItem(p *Player, name string, count int) bool {
 		return false
 	}
 	p.Inventory[name] += count
+	return true
+}
+
+func RemoveItem(p *Player, name string, count int) bool {
+	if p == nil || name == "" || count <= 0 {
+		return false
+	}
+	if p.Inventory == nil {
+		return false
+	}
+	current, ok := p.Inventory[name]
+	if !ok || current < count {
+		return false
+	}
+	current -= count
+	if current == 0 {
+		delete(p.Inventory, name)
+	} else {
+		p.Inventory[name] = current
+	}
 	return true
 }
 
@@ -193,7 +217,6 @@ func formatSkills(sk map[string]bool) string {
 	return s
 }
 
-// countItems returns the total number of item units in the inventory.
 func countItems(inv map[string]int) int {
 	total := 0
 	for _, c := range inv {
@@ -227,16 +250,101 @@ func HPBar(p Player) string {
 	return color + bar + "\033[0m"
 }
 
-// hpColor returns the ANSI color code for the current HP percentage.
 func hpColor(p Player) string {
-	if p.HPmax <= 0 {
-		return "\033[31m"
-	}
 	pct := p.HP * 100 / p.HPmax
 	if pct > 66 {
-		return "\033[32m"
-	} else if pct > 33 && pct < 66 {
-		return "\033[33m"
+		return "\033[32m\033[1m"
+	} else if pct > 33 && pct <= 66 {
+		return "\033[33m\033[1m"
+	} else {
+		return "\033[31m\033[1m"
 	}
-	return "\033[31m"
+}
+
+func IsDead() {
+	ClearScreen()
+	fmt.Println(`\033[31mGame Over.\033[0m`)
+	fmt.Println()
+	fmt.Print("Press Enter to return to menu...")
+	var _pause byte
+	fmt.Scanf("%c", &_pause)
+	os.Exit(0)
+}
+
+type EquipmentStats struct {
+	Slot    string
+	HPBonus int
+}
+
+var equipmentData = map[string]EquipmentStats{
+	"Adventurer's hat":   {Slot: "Head", HPBonus: 10},
+	"Adventurer's tunic": {Slot: "Body", HPBonus: 25},
+	"Adventurer's boots": {Slot: "Feet", HPBonus: 15},
+}
+
+func EquipItem(p *Player, item string) (string, bool) {
+	data, ok := equipmentData[item]
+	if !ok || p.Inventory[item] <= 0 {
+		return "", false
+	}
+	prevItem := ""
+	switch data.Slot {
+	case "Head":
+		prevItem = p.Head
+		p.Head = item
+	case "Body":
+		prevItem = p.Body
+		p.Body = item
+	case "Feet":
+		prevItem = p.Feet
+		p.Feet = item
+	}
+	if prevItem != "" {
+		removeEquipmentStats(p, prevItem)
+		p.Inventory[prevItem]++
+	}
+	RemoveItem(p, item, 1)
+	applyEquipmentStats(p, item)
+	return prevItem, true
+}
+
+func UnequipItem(p *Player, slot string) bool {
+	var item string
+	switch slot {
+	case "Head":
+		item = p.Head
+		p.Head = ""
+	case "Body":
+		item = p.Body
+		p.Body = ""
+	case "Feet":
+		item = p.Feet
+		p.Feet = ""
+	default:
+		return false
+	}
+	if item == "" {
+		return false
+	}
+	removeEquipmentStats(p, item)
+	p.Inventory[item]++
+	return true
+}
+
+func applyEquipmentStats(p *Player, item string) {
+	if data, ok := equipmentData[item]; ok {
+		p.HPmax += data.HPBonus
+		if p.HP > p.HPmax {
+			p.HP = p.HPmax
+		}
+	}
+}
+
+func removeEquipmentStats(p *Player, item string) {
+	if data, ok := equipmentData[item]; ok {
+		p.HPmax -= data.HPBonus
+		if p.HP > p.HPmax {
+			p.HP = p.HPmax
+		}
+	}
 }
