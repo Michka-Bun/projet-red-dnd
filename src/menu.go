@@ -38,6 +38,10 @@ func Menu(p *Player) {
 			fmt.Scanf("%c", &_pause)
 			lastMsg = "\033[36mCharacter info displayed.\033[0m"
 		case 2:
+			if len(p.Inventory) == 0 {
+				lastMsg = "\033[31m\033[1mYour inventory is empty.\033[0m"
+				continue
+			}
 			ClearScreen()
 			fmt.Println("Inventory:")
 			fmt.Println("----------------")
@@ -76,8 +80,16 @@ func AccessInventory(p *Player) {
 		}
 
 		names := make([]string, 0, len(p.Inventory))
-		for name := range p.Inventory {
+		for name, count := range p.Inventory {
+			if count <= 0 {
+				delete(p.Inventory, name)
+				continue
+			}
 			names = append(names, name)
+		}
+		if len(names) == 0 {
+			fmt.Println("\033[31m\033[1mYour inventory is empty.\033[0m")
+			return
 		}
 		sort.Strings(names)
 		for i, name := range names {
@@ -86,7 +98,8 @@ func AccessInventory(p *Player) {
 		fmt.Println("----------------")
 		fmt.Println("1) \033[32mUse/Equip an item\033[0m")
 		fmt.Println("2) \033[36mItem info\033[0m")
-		fmt.Println("3) \033[31mBack\033[0m")
+		fmt.Println("3) \033[35mDrop an item\033[0m")
+		fmt.Println("4) \033[31mBack\033[0m")
 		fmt.Println("----------------")
 		fmt.Print("Choose an option: ")
 
@@ -105,13 +118,34 @@ func AccessInventory(p *Player) {
 			name := names[idx-1]
 			switch name {
 			case "Health potion":
-				// TakePot(p)
+				lastMsg = TakeHealPot(p)
 			case "Poison potion":
-				// PoisonPot(p)
+				lastMsg = TakePoisonPot(p)
 			case "Spell book: Fireball":
-				// func to learn this skill
+				if HasSkill(p, "Fireball") {
+					lastMsg = "You already know Fireball."
+				} else {
+					if AddSkill(p, "Fireball") {
+						if RemoveItem(p, name, 1) {
+							lastMsg = "You learned the skill: \033[34mFireball!\033[0m"
+						} else {
+							lastMsg = "The spell book seems to be missing."
+						}
+					} else {
+						lastMsg = "Failed to learn Fireball."
+					}
+				}
 			case "Adventurer's hat", "Adventurer's tunic", "Adventurer's boots":
-				// func to equip this armor
+				prevItem, ok := EquipItem(p, name)
+				if ok {
+					if prevItem != "" {
+						lastMsg = fmt.Sprintf("Equipped %s, unequipped %s.", name, prevItem)
+					} else {
+						lastMsg = fmt.Sprintf("Equipped %s.", name)
+					}
+				} else {
+					lastMsg = "Failed to equip item."
+				}
 			case "Wolf fur", "Boar leather", "Troll leather", "Crow feather":
 				lastMsg = "This item cannot be used or equipped."
 			default:
@@ -126,7 +160,6 @@ func AccessInventory(p *Player) {
 				continue
 			}
 			name := names[idx-1]
-			// Basic descriptions; expand as needed
 			desc := "No description available."
 			switch name {
 			case "Health potion":
@@ -146,6 +179,20 @@ func AccessInventory(p *Player) {
 			}
 			lastMsg = fmt.Sprintf("%s — %s", name, desc)
 		case 3:
+			var idx int
+			fmt.Print("Enter item number to drop: ")
+			fmt.Scanln(&idx)
+			if idx < 1 || idx > len(names) {
+				lastMsg = "Invalid item index."
+				continue
+			}
+			name := names[idx-1]
+			if RemoveItem(p, name, 1) {
+				lastMsg = fmt.Sprintf("Dropped one %s.", name)
+			} else {
+				lastMsg = "You don't have that item."
+			}
+		case 4:
 			return
 		default:
 			lastMsg = "Invalid choice, please try again."
@@ -172,8 +219,8 @@ func AccessShop(p *Player) {
 			fmt.Println("1. Health potion \t\t: \033[33m\033[1m \tFREE\033[0m")
 		}
 		fmt.Println("2. Poison potion \t\t: \033[33m\033[1m6 \tgold\033[0m")
-		if p.Inventory["Spell book: Fireball"] == 0 {
-			fmt.Println("3. Spell book \t: \033[31m\033[1mFireball\033[0m \t: \033[33m\033[1m25 \tgold\033[0m")
+		if p.Inventory["Spell book: Fireball"] == 0 && !HasSkill(p, "Fireball") {
+			fmt.Println("3. Spell book \t: \033[34m\033[1mFireball\033[0m \t: \033[33m\033[1m25 \tgold\033[0m")
 		}
 		fmt.Println("4. Wolf fur \t\t\t: \033[33m\033[1m4 \tgold\033[0m")
 		fmt.Println("5. Troll leather \t\t: \033[33m\033[1m7 \tgold\033[0m")
@@ -223,6 +270,14 @@ func AccessShop(p *Player) {
 				lastMsg = "You don't have enough gold."
 			}
 		case 3:
+			if HasSkill(p, "Fireball") {
+				lastMsg = "You already know this spell."
+				continue
+			}
+			if p.Inventory["Spell book: Fireball"] > 0 {
+				lastMsg = "You already have this spell book."
+				continue
+			}
 			if p.Gold >= 25 {
 				if AddItem(p, "Spell book: Fireball", 1) {
 					p.Gold -= 25
@@ -283,7 +338,6 @@ func AccessShop(p *Player) {
 			} else if p.Gold >= 30 {
 				p.Gold -= 30
 				p.BackpackLevel++
-				// Increase capacity by 5 per level
 				p.InventorySlot += 5
 				lastMsg = fmt.Sprintf("Backpack upgraded to level %d (capacity %d).", p.BackpackLevel, p.InventorySlot)
 			} else {
@@ -325,22 +379,55 @@ func Blacksmith(p *Player) {
 		switch choice {
 		case 1:
 			if p.Gold >= 5 {
+				if p.Inventory["Crow feather"] < 1 || p.Inventory["Boar leather"] < 1 {
+					lastMsg = "You don't have enough material."
+					continue
+				}
+				if !RemoveItem(p, "Crow feather", 1) || !RemoveItem(p, "Boar leather", 1) {
+					AddItem(p, "Crow feather", 1)
+					AddItem(p, "Boar leather", 1)
+					lastMsg = "You don't have enough material."
+					continue
+				}
 				p.Gold -= 5
-				lastMsg = "Crafted Adventurer's hat (gold only)."
+				lastMsg = "Crafted Adventurer's hat."
+				p.Inventory["Adventurer's hat"]++
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
 		case 2:
 			if p.Gold >= 5 {
+				if p.Inventory["Wolf fur"] < 2 || p.Inventory["Troll leather"] < 1 {
+					lastMsg = "You don't have enough material."
+					continue
+				}
+				if !RemoveItem(p, "Wolf fur", 2) || !RemoveItem(p, "Troll leather", 1) {
+					AddItem(p, "Wolf fur", 2)
+					AddItem(p, "Troll leather", 1)
+					lastMsg = "You don't have enough material."
+					continue
+				}
 				p.Gold -= 5
-				lastMsg = "Crafted Adventurer's tunic (gold only)."
+				lastMsg = "Crafted Adventurer's tunic."
+				p.Inventory["Adventurer's tunic"]++
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
 		case 3:
 			if p.Gold >= 5 {
+				if p.Inventory["Wolf fur"] < 1 || p.Inventory["Boar leather"] < 1 {
+					lastMsg = "You don't have enough material."
+					continue
+				}
+				if !RemoveItem(p, "Wolf fur", 1) || !RemoveItem(p, "Boar leather", 1) {
+					AddItem(p, "Wolf fur", 1)
+					AddItem(p, "Boar leather", 1)
+					lastMsg = "You don't have enough material."
+					continue
+				}
 				p.Gold -= 5
-				lastMsg = "Crafted Adventurer's boots (gold only)."
+				lastMsg = "Crafted Adventurer's boots."
+				p.Inventory["Adventurer's boots"]++
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
