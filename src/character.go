@@ -10,6 +10,7 @@ type Player struct {
 	Class         string
 	HPmax         int
 	HP            int
+	BaseDamage    int
 	Level         int
 	Gold          int
 	BackpackLevel int
@@ -79,18 +80,20 @@ func SetInfo() Player {
 	}
 
 	//stats en fonction de la classe
-	var HPmax, HP, Level int
+	var HPmax, HP, Level, BaseDamage int
 	var Gold int
 	var InventorySlot int
 	var Inventory map[string]int
 	if Class == "Warrior" {
 		HPmax = 100
 		HP = 100
+		BaseDamage = 15
 		InventorySlot = 5
 		Inventory = map[string]int{}
 	} else if Class == "Mage" {
 		HPmax = 75
 		HP = 75
+		BaseDamage = 10
 		InventorySlot = 10
 		Inventory = map[string]int{}
 	}
@@ -105,8 +108,8 @@ func SetInfo() Player {
 	fmt.Println("Informations on your new character:")
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
-	fmt.Println("HP max \t\t:", HPmax)
-	fmt.Println("HP \t\t:", HP)
+	fmt.Println("HP \t\t:", HP, "/", HPmax)
+	fmt.Println("Base damage \t\t:", BaseDamage)
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
 	fmt.Println("Backpack :",
@@ -118,6 +121,7 @@ func SetInfo() Player {
 		Class:         Class,
 		HPmax:         HPmax,
 		HP:            HP,
+		BaseDamage:    BaseDamage,
 		Level:         Level,
 		Gold:          Gold,
 		BackpackLevel: BackpackLevel,
@@ -133,12 +137,13 @@ func DisplayInfo(p Player) {
 	fmt.Println("Name \t\t:", p.Name)
 	fmt.Println("Class \t\t:", p.Class)
 	fmt.Println("HP max \t\t:", p.HPmax)
+	fmt.Println("Base damage \t:", p.BaseDamage)
 	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
-	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
-  fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)")
+	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", HPColor(p), p.HP, HPBar(p))
+	fmt.Println("Poison effect \t:", p.PoisonEffect, "turn(s) left")
 }
 
 func AddItem(p *Player, name string, count int) bool {
@@ -207,7 +212,7 @@ func HPBar(p Player) string {
 }
 
 // hpColor returns the ANSI color code for the current HP percentage.
-func hpColor(p Player) string {
+func HPColor(p Player) string {
 	if p.HPmax <= 0 {
 		return "\033[31m"
 	}
