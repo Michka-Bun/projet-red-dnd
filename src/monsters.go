@@ -6,27 +6,43 @@ import (
 )
 
 type Monster struct {
-	Name         string
-	Class        string
-	HPmax        int
-	HP           int
-	BaseDamage   int
-	Level        int
-	PoisonEffect int
+	Name              string
+	Class             string
+	HPmax             int
+	HP                int
+	BaseDamage        int
+	Level             int
+	PoisonEffect      int
+	MonsterUseHealPot bool
 }
 
 func ChooseMonster() Monster {
 	//Classe et stats de classe(et Nom optionnel pour RP)
 	var Class string
 	var HPmax, HP, Level, BaseDamage int
-	if Class == "Warrior" {
+	if Class == "Warrior" { //Compétence réduc dégats
 		HPmax = 250
 		HP = 250
 		BaseDamage = 15
 		Level = 1
-	} else if Class == "Mage" {
+	} else if Class == "Mage" { //potion heal et poison
 		HPmax = 150
 		HP = 150
+		BaseDamage = 10
+		Level = 1
+	} else if Class == "Jester" { //potion affaiblissement et gel
+		HPmax = 300
+		HP = 300
+		BaseDamage = 15
+		Level = 1
+	} else if Class == "Piaf" { // ou Sparrow //Résistance contre Player porté au sol
+		HPmax = 200
+		HP = 200
+		BaseDamage = 10
+		Level = 1
+	} else if Class == "Devourer" { //Résistance contre Player Mage
+		HPmax = 200
+		HP = 200
 		BaseDamage = 10
 		Level = 1
 	} else if Class == "Boss" {
@@ -37,15 +53,17 @@ func ChooseMonster() Monster {
 	}
 	//Autres infos
 	var PoisonEffect int
+	var MonsterUseHealPot = false
 
 	//retour d'info
 	return Monster{
-		Class:        Class,
-		HPmax:        HPmax,
-		HP:           HP,
-		Level:        Level,
-		PoisonEffect: PoisonEffect,
-		BaseDamage:   BaseDamage,
+		Class:             Class,
+		HPmax:             HPmax,
+		HP:                HP,
+		Level:             Level,
+		PoisonEffect:      PoisonEffect,
+		BaseDamage:        BaseDamage,
+		MonsterUseHealPot: MonsterUseHealPot,
 	}
 }
 

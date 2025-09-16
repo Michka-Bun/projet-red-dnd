@@ -147,8 +147,8 @@ func DisplayInfo(p Player) {
 	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
 	fmt.Println("Backpack \t:",
-		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
-	fmt.Println("Skills \t\t:\033[34m", formatSkills(p.Skills), "\033[0m")
+		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
+	fmt.Println("Skills \t\t:\033[34m", FormatSkills(p.Skills), "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
 	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
 }
@@ -187,7 +187,7 @@ func RemoveItem(p *Player, name string, count int) bool {
 	return true
 }
 
-func formatInventory(inv map[string]int) string {
+func FormatInventory(inv map[string]int) string {
 	if len(inv) == 0 {
 		return "[]"
 	}
@@ -204,7 +204,7 @@ func formatInventory(inv map[string]int) string {
 	return s
 }
 
-func formatSkills(sk map[string]bool) string {
+func FormatSkills(sk map[string]bool) string {
 	if len(sk) == 0 {
 		return "[]"
 	}
@@ -221,7 +221,7 @@ func formatSkills(sk map[string]bool) string {
 	return s
 }
 
-func countItems(inv map[string]int) int {
+func CountItems(inv map[string]int) int {
 	total := 0
 	for _, c := range inv {
 		total += c
