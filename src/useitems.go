@@ -31,3 +31,11 @@ func PoisonPot(p Player, m Monster) {
 		}
 	}
 }
+
+func TakePoisonPot(p Player) {
+	fmt.Println("You did self-sabotage and drank a poison potion. You take 30 damage.")
+	p.HP -= 30
+	if p.HP < 1 {
+		//	dnd.IsDead() //IsDead pas encore définie
+	}
+}

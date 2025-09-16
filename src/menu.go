@@ -38,6 +38,10 @@ func Menu(p *Player) {
 			fmt.Scanf("%c", &_pause)
 			lastMsg = "\033[36mCharacter info displayed.\033[0m"
 		case 2:
+			if len(p.Inventory) == 0 {
+				lastMsg = "\033[31m\033[1mYour inventory is empty.\033[0m"
+				continue
+			}
 			ClearScreen()
 			fmt.Println("Inventory:")
 			fmt.Println("----------------")
@@ -86,7 +90,8 @@ func AccessInventory(p *Player) {
 		fmt.Println("----------------")
 		fmt.Println("1) \033[32mUse/Equip an item\033[0m")
 		fmt.Println("2) \033[36mItem info\033[0m")
-		fmt.Println("3) \033[31mBack\033[0m")
+		fmt.Println("3) \033[35mDrop an item\033[0m")
+		fmt.Println("4) \033[31mBack\033[0m")
 		fmt.Println("----------------")
 		fmt.Print("Choose an option: ")
 
@@ -105,11 +110,26 @@ func AccessInventory(p *Player) {
 			name := names[idx-1]
 			switch name {
 			case "Health potion":
-				// TakePot(p)
+				TakeHealPot(*p)
 			case "Poison potion":
-				// PoisonPot(p)
+				TakePoisonPot(*p)
 			case "Spell book: Fireball":
-				// func to learn this skill
+				if HasSkill(p, "Fireball") {
+					lastMsg = "You already know Fireball."
+				} else {
+					if AddSkill(p, "Fireball") {
+						// consume one book
+						if p.Inventory[name] > 0 {
+							p.Inventory[name]--
+							if p.Inventory[name] == 0 {
+								delete(p.Inventory, name)
+							}
+						}
+						lastMsg = "You learned the skill: Fireball!"
+					} else {
+						lastMsg = "Failed to learn Fireball."
+					}
+				}
 			case "Adventurer's hat", "Adventurer's tunic", "Adventurer's boots":
 				// func to equip this armor
 			case "Wolf fur", "Boar leather", "Troll leather", "Crow feather":
@@ -146,6 +166,24 @@ func AccessInventory(p *Player) {
 			}
 			lastMsg = fmt.Sprintf("%s — %s", name, desc)
 		case 3:
+			var idx int
+			fmt.Print("Enter item number to drop: ")
+			fmt.Scanln(&idx)
+			if idx < 1 || idx > len(names) {
+				lastMsg = "Invalid item index."
+				continue
+			}
+			name := names[idx-1]
+			if p.Inventory[name] > 0 {
+				p.Inventory[name]--
+				if p.Inventory[name] == 0 {
+					delete(p.Inventory, name)
+				}
+				lastMsg = fmt.Sprintf("Dropped one %s.", name)
+			} else {
+				lastMsg = "You don't have that item."
+			}
+		case 4:
 			return
 		default:
 			lastMsg = "Invalid choice, please try again."
@@ -166,7 +204,7 @@ func AccessShop(p *Player) {
 		fmt.Println("You have \033[33m\033[1m", p.Gold, "gold\033[0m.")
 		fmt.Println("Here is what the shop has to offer:")
 		fmt.Println("-----------------------------------")
-		if p.Inventory["Health potion"] > 0 {
+		if p.Inventory["Health potion"] > 0 || !HasSkill(p, "Fireball") {
 			fmt.Println("1. Health potion \t\t: \033[33m\033[1m3 \tgold\033[0m")
 		} else {
 			fmt.Println("1. Health potion \t\t: \033[33m\033[1m \tFREE\033[0m")

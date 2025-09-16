@@ -15,6 +15,7 @@ type Player struct {
 	BackpackLevel int
 	InventorySlot int
 	Inventory     map[string]int
+	Skills        map[string]bool
 	PoisonEffect  int
 }
 
@@ -83,21 +84,22 @@ func SetInfo() Player {
 	var Gold int
 	var InventorySlot int
 	var Inventory map[string]int
+	var Skills map[string]bool
 	if Class == "Warrior" {
 		HPmax = 100
 		HP = 100
 		InventorySlot = 5
-		Inventory = map[string]int{}
 	} else if Class == "Mage" {
 		HPmax = 75
 		HP = 75
 		InventorySlot = 10
-		Inventory = map[string]int{}
+
 	}
 	Level = 1
 	Gold = 100
 	BackpackLevel := 1
-	//Autres infos
+	Inventory = map[string]int{}
+	Skills = map[string]bool{"Punch": true}
 	var PoisonEffect int
 
 	//retour d'infos
@@ -123,6 +125,7 @@ func SetInfo() Player {
 		BackpackLevel: BackpackLevel,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
+		Skills:        Skills,
 		PoisonEffect:  PoisonEffect,
 	}
 }
@@ -137,8 +140,9 @@ func DisplayInfo(p Player) {
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
+	fmt.Println("Skills \t\t:", formatSkills(p.Skills))
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
-  fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)")
+	// fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)") not sure
 }
 
 func AddItem(p *Player, name string, count int) bool {
@@ -166,6 +170,23 @@ func formatInventory(inv map[string]int) string {
 			s += ", "
 		}
 		s += fmt.Sprintf("%s x%d", name, count)
+		first = false
+	}
+	s += "]"
+	return s
+}
+
+func formatSkills(sk map[string]bool) string {
+	if len(sk) == 0 {
+		return "[]"
+	}
+	s := "["
+	first := true
+	for name := range sk {
+		if !first {
+			s += ", "
+		}
+		s += name
 		first = false
 	}
 	s += "]"
