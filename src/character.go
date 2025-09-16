@@ -12,8 +12,9 @@ type Player struct {
 	HP            int
 	Level         int
 	Gold          int
+	BackpackLevel int
 	InventorySlot int
-	Inventory     []string
+	Inventory     map[string]int
 }
 
 /*
@@ -80,21 +81,21 @@ func SetInfo() Player {
 	var HPmax, HP, Level int
 	var Gold int
 	var InventorySlot int
-	var Inventory []string
+	var Inventory map[string]int
 	if Class == "Warrior" {
 		HPmax = 100
 		HP = 100
-		Level = 1
 		InventorySlot = 5
-		Inventory = []string{}
+		Inventory = map[string]int{}
 	} else if Class == "Mage" {
 		HPmax = 75
 		HP = 75
-		Level = 1
 		InventorySlot = 10
-		Inventory = []string{}
+		Inventory = map[string]int{}
 	}
-	Gold = 0
+	Level = 1
+	Gold = 100
+	BackpackLevel := 1
 
 	//retour d'infos
 	fmt.Print("\033[2J\033[3J\033[H")
@@ -105,8 +106,9 @@ func SetInfo() Player {
 	fmt.Println("HP \t\t:", HP)
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
-	fmt.Println("Inventory slots :", InventorySlot)
-	fmt.Println("Inventory items :", Inventory)
+	fmt.Println("Backpack :",
+		fmt.Sprintf("L%d (%d/%d)", BackpackLevel, countItems(Inventory), InventorySlot))
+	fmt.Println("Inventory items :", formatInventory(Inventory))
 
 	return Player{
 		Name:          Name,
@@ -115,6 +117,7 @@ func SetInfo() Player {
 		HP:            HP,
 		Level:         Level,
 		Gold:          Gold,
+		BackpackLevel: BackpackLevel,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
 	}
@@ -126,21 +129,51 @@ func DisplayInfo(p Player) {
 	fmt.Println("Name \t\t:", p.Name)
 	fmt.Println("Class \t\t:", p.Class)
 	fmt.Println("HP max \t\t:", p.HPmax)
-	fmt.Println("HP \t\t:", p.HP, "\t\t", HPBar(p))
-	fmt.Println("Level \t\t:", p.Level)
+	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
-	fmt.Println("Inventory slots :", p.InventorySlot)
+	fmt.Println("Backpack \t:",
+		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
+	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
 }
 
-func AccessInventory(p Player) {
-	if len(p.Inventory) == 0 {
-		fmt.Println("\033[31m\033[1mYour inventory is empty.\033[0m")
-		return
+func AddItem(p *Player, name string, count int) bool {
+	if name == "" || count <= 0 {
+		return false
 	}
-	fmt.Println("Your inventory contains:")
-	for _, item := range p.Inventory {
-		fmt.Println("-", item)
+	if p.Inventory == nil {
+		p.Inventory = map[string]int{}
 	}
+	if countItems(p.Inventory)+count > p.InventorySlot {
+		return false
+	}
+	p.Inventory[name] += count
+	return true
+}
+
+func formatInventory(inv map[string]int) string {
+	if len(inv) == 0 {
+		return "[]"
+	}
+	s := "["
+	first := true
+	for name, count := range inv {
+		if !first {
+			s += ", "
+		}
+		s += fmt.Sprintf("%s x%d", name, count)
+		first = false
+	}
+	s += "]"
+	return s
+}
+
+// countItems returns the total number of item units in the inventory.
+func countItems(inv map[string]int) int {
+	total := 0
+	for _, c := range inv {
+		total += c
+	}
+	return total
 }
 
 func HPBar(p Player) string {
@@ -166,4 +199,18 @@ func HPBar(p Player) string {
 		color = "\033[33m"
 	}
 	return color + bar + "\033[0m"
+}
+
+// hpColor returns the ANSI color code for the current HP percentage.
+func hpColor(p Player) string {
+	if p.HPmax <= 0 {
+		return "\033[31m"
+	}
+	pct := p.HP * 100 / p.HPmax
+	if pct > 66 {
+		return "\033[32m"
+	} else if pct > 33 && pct < 66 {
+		return "\033[33m"
+	}
+	return "\033[31m"
 }
