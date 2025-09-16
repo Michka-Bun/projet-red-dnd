@@ -15,6 +15,7 @@ type Player struct {
 	BackpackLevel int
 	InventorySlot int
 	Inventory     map[string]int
+	PoisonEffect  int
 }
 
 /*
@@ -96,6 +97,8 @@ func SetInfo() Player {
 	Level = 1
 	Gold = 100
 	BackpackLevel := 1
+	//Autres infos
+	var PoisonEffect int
 
 	//retour d'infos
 	fmt.Print("\033[2J\033[3J\033[H")
@@ -120,6 +123,7 @@ func SetInfo() Player {
 		BackpackLevel: BackpackLevel,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
+		PoisonEffect:  PoisonEffect,
 	}
 }
 
@@ -134,6 +138,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
+  fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)")
 }
 
 func AddItem(p *Player, name string, count int) bool {
