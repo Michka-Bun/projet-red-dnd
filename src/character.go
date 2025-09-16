@@ -11,6 +11,7 @@ type Player struct {
 	Class         string
 	HPmax         int
 	HP            int
+	BaseDamage    int
 	Level         int
 	Gold          int
 	BackpackLevel int
@@ -84,7 +85,7 @@ func SetInfo() Player {
 	}
 
 	//stats en fonction de la classe
-	var HPmax, HP, Level int
+	var HPmax, HP, Level, BaseDamage int
 	var Gold int
 	var InventorySlot int
 	var Inventory map[string]int
@@ -92,10 +93,12 @@ func SetInfo() Player {
 	if Class == "Warrior" {
 		HPmax = 100
 		HP = 100
+		BaseDamage = 15
 		InventorySlot = 5
 	} else if Class == "Mage" {
 		HPmax = 75
 		HP = 75
+		BaseDamage = 10
 		InventorySlot = 10
 
 	}
@@ -111,19 +114,20 @@ func SetInfo() Player {
 	fmt.Println("Informations on your new character:")
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
-	fmt.Println("HP max \t\t:", HPmax)
-	fmt.Println("HP \t\t:", HP)
+	fmt.Println("HP \t\t:", HP, "/", HPmax)
+	fmt.Println("Base damage \t\t:", BaseDamage)
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
 	fmt.Println("Backpack :",
-		fmt.Sprintf("L%d (%d/%d)", BackpackLevel, countItems(Inventory), InventorySlot))
-	fmt.Println("Inventory items :", formatInventory(Inventory))
+		fmt.Sprintf("L%d (%d/%d)", BackpackLevel, CountItems(Inventory), InventorySlot))
+	fmt.Println("Inventory items :", FormatInventory(Inventory))
 
 	return Player{
 		Name:          Name,
 		Class:         Class,
 		HPmax:         HPmax,
 		HP:            HP,
+		BaseDamage:    BaseDamage,
 		Level:         Level,
 		Gold:          Gold,
 		BackpackLevel: BackpackLevel,
@@ -156,7 +160,7 @@ func AddItem(p *Player, name string, count int) bool {
 	if p.Inventory == nil {
 		p.Inventory = map[string]int{}
 	}
-	if countItems(p.Inventory)+count > p.InventorySlot {
+	if CountItems(p.Inventory)+count > p.InventorySlot {
 		return false
 	}
 	p.Inventory[name] += count
@@ -241,11 +245,11 @@ func HPBar(p Player) string {
 	bar := fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat(" ", barLength-filled))
 
 	pct := p.HP * 100 / p.HPmax
-	color := "\033[31m"
+	color := "\033[31m" //rouge
 	if pct > 66 {
-		color = "\033[32m"
-	} else if pct > 33 && pct < 66 {
-		color = "\033[33m"
+		color = "\033[32m" //vert
+	} else if pct > 33 && pct <= 66 {
+		color = "\033[33m" //jaune
 	}
 	return color + bar + "\033[0m"
 }
