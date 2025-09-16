@@ -1,8 +1,8 @@
 package main
 
 import (
-    "fmt"
-    "dnd"
+	"dnd"
+	"fmt"
 )
 
 func main() {
@@ -11,5 +11,5 @@ func main() {
 	p := dnd.SetInfo()
 	dnd.ClearScreen()
 	fmt.Println("-------------------")
-	dnd.Menu(p)
+	dnd.Menu(&p)
 }

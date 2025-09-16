@@ -11,6 +11,7 @@ type Player struct {
 	HPmax         int
 	HP            int
 	Level         int
+	Gold          int
 	InventorySlot int
 	Inventory     []string
 }
@@ -77,6 +78,7 @@ func SetInfo() Player {
 
 	//stats en fonction de la classe
 	var HPmax, HP, Level int
+	var Gold int
 	var InventorySlot int
 	var Inventory []string
 	if Class == "Warrior" {
@@ -92,15 +94,17 @@ func SetInfo() Player {
 		InventorySlot = 10
 		Inventory = []string{}
 	}
+	Gold = 0
 
 	//retour d'infos
-	fmt.Println(strings.Repeat("\n", 21))
+	fmt.Print("\033[2J\033[3J\033[H")
 	fmt.Println("Informations on your new character:")
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
 	fmt.Println("HP max \t\t:", HPmax)
 	fmt.Println("HP \t\t:", HP)
 	fmt.Println("Level \t\t:", Level)
+	fmt.Println("Gold \t\t:", Gold)
 	fmt.Println("Inventory slots :", InventorySlot)
 	fmt.Println("Inventory items :", Inventory)
 
@@ -110,6 +114,7 @@ func SetInfo() Player {
 		HPmax:         HPmax,
 		HP:            HP,
 		Level:         Level,
+		Gold:          Gold,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
 	}
@@ -121,13 +126,44 @@ func DisplayInfo(p Player) {
 	fmt.Println("Name \t\t:", p.Name)
 	fmt.Println("Class \t\t:", p.Class)
 	fmt.Println("HP max \t\t:", p.HPmax)
-	fmt.Println("HP \t\t:", p.HP)
+	fmt.Println("HP \t\t:", p.HP, "\t\t", HPBar(p))
 	fmt.Println("Level \t\t:", p.Level)
+	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
 	fmt.Println("Inventory slots :", p.InventorySlot)
-	fmt.Println("Inventory items :", p.Inventory)
 }
 
 func AccessInventory(p Player) {
-	fmt.Println(p.Inventory)
+	if len(p.Inventory) == 0 {
+		fmt.Println("\033[31m\033[1mYour inventory is empty.\033[0m")
+		return
+	}
+	fmt.Println("Your inventory contains:")
+	for _, item := range p.Inventory {
+		fmt.Println("-", item)
+	}
+}
 
+func HPBar(p Player) string {
+	barLength := 15
+	if p.HPmax <= 0 {
+		p.HPmax = 1
+	}
+	filled := int(float64(p.HP) / float64(p.HPmax) * float64(barLength))
+	if filled < 0 {
+		filled = 0
+	}
+	if filled > barLength {
+		filled = barLength
+	}
+
+	bar := fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat(" ", barLength-filled))
+
+	pct := p.HP * 100 / p.HPmax
+	color := "\033[31m"
+	if pct > 66 {
+		color = "\033[32m"
+	} else if pct > 33 && pct < 66 {
+		color = "\033[33m"
+	}
+	return color + bar + "\033[0m"
 }
