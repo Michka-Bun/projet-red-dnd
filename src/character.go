@@ -113,8 +113,8 @@ func SetInfo() Player {
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
 	fmt.Println("Backpack :",
-		fmt.Sprintf("L%d (%d/%d)", BackpackLevel, countItems(Inventory), InventorySlot))
-	fmt.Println("Inventory items :", formatInventory(Inventory))
+		fmt.Sprintf("L%d (%d/%d)", BackpackLevel, CountItems(Inventory), InventorySlot))
+	fmt.Println("Inventory items :", FormatInventory(Inventory))
 
 	return Player{
 		Name:          Name,
@@ -141,7 +141,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")   //bleu clair
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m") //jaune
 	fmt.Println("Backpack \t:",
-		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
+		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", HPColor(p), p.HP, HPBar(p))
 	fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
 }
@@ -153,14 +153,14 @@ func AddItem(p *Player, name string, count int) bool {
 	if p.Inventory == nil {
 		p.Inventory = map[string]int{}
 	}
-	if countItems(p.Inventory)+count > p.InventorySlot {
+	if CountItems(p.Inventory)+count > p.InventorySlot {
 		return false
 	}
 	p.Inventory[name] += count
 	return true
 }
 
-func formatInventory(inv map[string]int) string {
+func FormatInventory(inv map[string]int) string {
 	if len(inv) == 0 {
 		return "[]"
 	}
@@ -178,7 +178,7 @@ func formatInventory(inv map[string]int) string {
 }
 
 // countItems returns the total number of item units in the inventory.
-func countItems(inv map[string]int) int {
+func CountItems(inv map[string]int) int {
 	total := 0
 	for _, c := range inv {
 		total += c
