@@ -11,8 +11,10 @@ type Player struct {
 	HPmax         int
 	HP            int
 	Level         int
+	Gold          int
+	BackpackLevel int
 	InventorySlot int
-	Inventory     []string
+	Inventory     map[string]int
 	PoisonEffect  int
 }
 
@@ -78,34 +80,38 @@ func SetInfo() Player {
 
 	//stats en fonction de la classe
 	var HPmax, HP, Level int
+	var Gold int
 	var InventorySlot int
-	var Inventory []string
+	var Inventory map[string]int
 	if Class == "Warrior" {
 		HPmax = 100
 		HP = 100
-		Level = 1
 		InventorySlot = 5
-		Inventory = []string{}
+		Inventory = map[string]int{}
 	} else if Class == "Mage" {
 		HPmax = 75
 		HP = 75
-		Level = 1
 		InventorySlot = 10
-		Inventory = []string{}
+		Inventory = map[string]int{}
 	}
+	Level = 1
+	Gold = 100
+	BackpackLevel := 1
 	//Autres infos
 	var PoisonEffect int
 
 	//retour d'infos
-	fmt.Println(strings.Repeat("\n", 21))
+	fmt.Print("\033[2J\033[3J\033[H")
 	fmt.Println("Informations on your new character:")
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
 	fmt.Println("HP max \t\t:", HPmax)
 	fmt.Println("HP \t\t:", HP)
 	fmt.Println("Level \t\t:", Level)
-	fmt.Println("Inventory slots :", InventorySlot)
-	fmt.Println("Inventory items :", Inventory)
+	fmt.Println("Gold \t\t:", Gold)
+	fmt.Println("Backpack :",
+		fmt.Sprintf("L%d (%d/%d)", BackpackLevel, countItems(Inventory), InventorySlot))
+	fmt.Println("Inventory items :", formatInventory(Inventory))
 
 	return Player{
 		Name:          Name,
@@ -113,6 +119,8 @@ func SetInfo() Player {
 		HPmax:         HPmax,
 		HP:            HP,
 		Level:         Level,
+		Gold:          Gold,
+		BackpackLevel: BackpackLevel,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
 		PoisonEffect:  PoisonEffect,
@@ -124,14 +132,90 @@ func DisplayInfo(p Player) {
 	fmt.Println("------------------------------")
 	fmt.Println("Name \t\t:", p.Name)
 	fmt.Println("Class \t\t:", p.Class)
-	fmt.Println("HP \t\t:", p.HP, "/", p.HPmax)
-	fmt.Println("Level \t\t:", p.Level)
-	fmt.Println("Inventory slots :", p.InventorySlot)
-	fmt.Println("Inventory items :", p.Inventory)
-	fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)")
+	fmt.Println("HP max \t\t:", p.HPmax)
+	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
+	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
+	fmt.Println("Backpack \t:",
+		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
+	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
+  fmt.Println("Poison effect for :", p.PoisonEffect, "turn(s)")
 }
 
-func AccessInventory(p Player) {
-	fmt.Println(p.Inventory)
+func AddItem(p *Player, name string, count int) bool {
+	if name == "" || count <= 0 {
+		return false
+	}
+	if p.Inventory == nil {
+		p.Inventory = map[string]int{}
+	}
+	if countItems(p.Inventory)+count > p.InventorySlot {
+		return false
+	}
+	p.Inventory[name] += count
+	return true
+}
 
+func formatInventory(inv map[string]int) string {
+	if len(inv) == 0 {
+		return "[]"
+	}
+	s := "["
+	first := true
+	for name, count := range inv {
+		if !first {
+			s += ", "
+		}
+		s += fmt.Sprintf("%s x%d", name, count)
+		first = false
+	}
+	s += "]"
+	return s
+}
+
+// countItems returns the total number of item units in the inventory.
+func countItems(inv map[string]int) int {
+	total := 0
+	for _, c := range inv {
+		total += c
+	}
+	return total
+}
+
+func HPBar(p Player) string {
+	barLength := 15
+	if p.HPmax <= 0 {
+		p.HPmax = 1
+	}
+	filled := int(float64(p.HP) / float64(p.HPmax) * float64(barLength))
+	if filled < 0 {
+		filled = 0
+	}
+	if filled > barLength {
+		filled = barLength
+	}
+
+	bar := fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat(" ", barLength-filled))
+
+	pct := p.HP * 100 / p.HPmax
+	color := "\033[31m"
+	if pct > 66 {
+		color = "\033[32m"
+	} else if pct > 33 && pct < 66 {
+		color = "\033[33m"
+	}
+	return color + bar + "\033[0m"
+}
+
+// hpColor returns the ANSI color code for the current HP percentage.
+func hpColor(p Player) string {
+	if p.HPmax <= 0 {
+		return "\033[31m"
+	}
+	pct := p.HP * 100 / p.HPmax
+	if pct > 66 {
+		return "\033[32m"
+	} else if pct > 33 && pct < 66 {
+		return "\033[33m"
+	}
+	return "\033[31m"
 }
