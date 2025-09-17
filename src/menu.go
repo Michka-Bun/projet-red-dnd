@@ -55,9 +55,10 @@ func Menu(p *Player) {
 		case 5:
 			ClearScreen()
 			var surexit int
-			fmt.Println("\033[33m\033[1m ⚠ Are you sure to exiting the game.\033[0m")
-			fmt.Println("\033[31m\033[1mExit\033[0m ➔  Enter 1")               //\033[31m\033[1m1\033[0m 	//\033[31m\033[1mExit.\033[0m")
-			fmt.Println("\033[32m\033[1mResume\033[0m ➔  Enter any other key") //\033[32m\033[1many other key\033[0m 	//\033[32m\033[1mResume.\033[0m")
+			fmt.Println("\033[33m\033[1m ⚠ Are you sure to exiting the game ?\033[0m")
+			fmt.Println("\033[33m\033[1m ⚠ Your progress will be deleted !\033[0m")
+			fmt.Println("\033[31m\033[1mExit\033[0m ➔  Enter 1")
+			fmt.Println("\033[32m\033[1mResume\033[0m ➔  Enter any other key")
 			fmt.Scan(&surexit)
 			switch surexit {
 			case 1:

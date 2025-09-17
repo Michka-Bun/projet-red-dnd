@@ -16,7 +16,7 @@ type Monster struct {
 	MonsterUseHealPot bool
 }
 
-func ChooseMonster() Monster {
+func ChooseMonster(p Player) Monster {
 	//Classe et stats de classe(et Nom optionnel pour RP)
 	var Class string
 	var HPmax, HP, Level, BaseDamage int
@@ -36,9 +36,15 @@ func ChooseMonster() Monster {
 		BaseDamage = 15
 		Level = 1
 	} else if Class == "Piaf" { // ou Sparrow //Résistance contre Player porté au sol
-		HPmax = 200
-		HP = 200
-		BaseDamage = 10
+		if p.Class == "" {
+			HPmax = 200
+			HP = 200
+			BaseDamage = 10
+		} else {
+			HPmax = 200
+			HP = 200
+			BaseDamage = 10
+		}
 		Level = 1
 	} else if Class == "Devourer" { //Résistance contre Player Mage
 		HPmax = 200
