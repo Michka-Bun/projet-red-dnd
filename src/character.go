@@ -13,6 +13,8 @@ type Player struct {
 	HP            int
 	BaseDamage    int
 	Level         int
+	XP            int
+	XPmax         int
 	Gold          int
 	BackpackLevel int
 	InventorySlot int
@@ -92,7 +94,7 @@ func SetInfo() Player {
 	}
 
 	//stats en fonction de la classe
-	var HPmax, HP, Level, BaseDamage int
+	var HPmax, HP, Level, XP, XPmax, BaseDamage int
 	var Gold int
 	var InventorySlot int
 	var Inventory map[string]int
@@ -119,6 +121,8 @@ func SetInfo() Player {
 		InventorySlot = 5
 	}
 	Level = 1
+	XP = 0
+	XPmax = 100
 	Gold = 100
 	BackpackLevel := 1
 	Inventory = map[string]int{}
@@ -132,7 +136,7 @@ func SetInfo() Player {
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
 	fmt.Println("HP \t\t:", HP, "/", HPmax)
-	fmt.Println("Base damage \t\t:", BaseDamage)
+	fmt.Println("Base damage \t:", BaseDamage)
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
 	fmt.Println("Backpack :",
@@ -146,6 +150,8 @@ func SetInfo() Player {
 		HP:            HP,
 		BaseDamage:    BaseDamage,
 		Level:         Level,
+		XP:            XP,
+		XPmax:         XPmax,
 		Gold:          Gold,
 		BackpackLevel: BackpackLevel,
 		InventorySlot: InventorySlot,
@@ -162,7 +168,8 @@ func DisplayInfo(p Player) {
 	fmt.Println("Name \t\t:\033[97m", p.Name, "\033[0m")
 	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
 	fmt.Println("HP max \t\t:\033[97m", p.HPmax, "\033[0m")
-	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
+	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
+	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m with :\033[36m\033[1m", p.XP, "/", p.XPmax, "\033[0m XP")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
@@ -170,6 +177,22 @@ func DisplayInfo(p Player) {
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
 	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
 	fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
+}
+
+func LevelUp(p *Player) {
+	p.Level++
+	fmt.Println("Congratulations, you have \033[36m\033[1m leveled up \033[0m !")
+	fmt.Println("Your sats have increassed by \033[36m\033[1m 10% \033[0m")
+	p.HP += p.HP * 10 / 100
+	p.HPmax += p.HPmax * 10 / 100
+	p.BaseDamage += p.BaseDamage * 10 / 100
+	if p.XP == p.XPmax {
+		p.XP = 0
+	} else if p.XP > p.XPmax {
+		p.XP -= p.XPmax
+	}
+	p.XPmax += p.XPmax * 15 / 100
+	p.Gold += 10
 }
 
 func AddItem(p *Player, name string, count int) bool {

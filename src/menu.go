@@ -60,18 +60,21 @@ func Menu(p *Player) {
 			fmt.Println("\033[31m\033[1mExit\033[0m ➔  Enter 1")
 			fmt.Println("\033[32m\033[1mResume\033[0m ➔  Enter any other key")
 			fmt.Scan(&surexit)
-			switch surexit {
-			case 1:
+			if surexit == 1 {
 				ClearScreen()
 				fmt.Println("\033[31m\033[1mExiting the game.\033[0m")
 				os.Exit(0)
-
-			case 2:
+			} else {
 				Menu(p)
-			default:
-				fmt.Println("\033[37mInvalid choice, please try again.\033[0m")
 			}
+		case 6: // TEST TEMPORAIRE / A SUPPRIMER
+			p.XP += 27           //TEST
+			if p.XP >= p.XPmax { //TEST
+				LevelUp(p) //TEST
+			} //TEST
+
 		default:
+			fmt.Println("\033[37mInvalid choice, please try again.\033[0m")
 		}
 	}
 }
