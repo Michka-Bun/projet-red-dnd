@@ -55,10 +55,10 @@ func Menu(p *Player) {
 		case 5:
 			ClearScreen()
 			var surexit int
-			fmt.Println("\033[33m\033[1m ⚠ Are you sure to exiting the game ?\033[0m")
-			fmt.Println("\033[33m\033[1m ⚠ Your progress will be deleted !\033[0m")
-			fmt.Println("\033[31m\033[1mExit\033[0m ➔  Enter 1")
-			fmt.Println("\033[32m\033[1mResume\033[0m ➔  Enter any other key")
+			fmt.Println("\033[38;5;208m ⚠ Are you sure to exiting the game ?\033[0m")
+			fmt.Println("\033[38;5;208m ⚠ Your progress will be deleted !\033[0m")
+			fmt.Println("\033[31m\033[1m Exit\033[0m \t\t➔  Enter 1")
+			fmt.Println("\033[32m\033[1m Resume\033[0m \t➔  Enter any other key")
 			fmt.Scan(&surexit)
 			if surexit == 1 {
 				ClearScreen()
@@ -72,6 +72,8 @@ func Menu(p *Player) {
 			if p.XP >= p.XPmax { //TEST
 				LevelUp(p) //TEST
 			} //TEST
+		case 7: // TEST TEMPORAIRE / A SUPPRIMER
+			IsDead(p) //TEST
 
 		default:
 			fmt.Println("\033[37mInvalid choice, please try again.\033[0m")

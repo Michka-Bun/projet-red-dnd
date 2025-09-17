@@ -170,7 +170,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("HP max \t\t:\033[97m", p.HPmax, "\033[0m")
 	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
 	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m with :\033[36m\033[1m", p.XP, "/", p.XPmax, "\033[0m XP")
-	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
+	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold(s)\033[0m")
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
 	fmt.Println("Skills \t\t:\033[34m", FormatSkills(p.Skills), "\033[0m")
@@ -307,14 +307,38 @@ func hpColor(p Player) string {
 	}
 }
 
-func IsDead() {
+func IsDead(p *Player) {
+	var Revive int
 	ClearScreen()
-	fmt.Println(`\033[31mGame Over.\033[0m`)
+	fmt.Println("\033[31m\033[1m Game Over.\033[0m")
 	fmt.Println()
-	fmt.Print("Press Enter to return to menu...")
-	var _pause byte
-	fmt.Scanf("%c", &_pause)
-	os.Exit(0)
+	fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
+	fmt.Println("\033[32m\033[1m Revive \033[0m \t➔  Enter any other key")
+	fmt.Println("\033[38;5;208m ⚠ Reviving will delete your inventory and reduce your \033[33m\033[1mgolds\033[38;5;208m by 75%\033[0m")
+	fmt.Println("\033[38;5;208m ⚠ Your new balance will be :\033[1m", p.Gold-p.Gold*75/100, "\033[33m\033[1mgold(s)\033[0m")
+	fmt.Scan(&Revive)
+	if Revive == 1 {
+		ClearScreen()
+		var suregiveup int
+		fmt.Println("\033[38;5;208m ⚠ Are you sure you are giving up ?\033[0m")
+		fmt.Println("\033[38;5;208m ⚠ Your progress will be deleted !\033[0m")
+		fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
+		fmt.Println("\033[32m\033[1m Back\033[0m \t\t➔  Enter any other key")
+		fmt.Scan(&suregiveup)
+		if suregiveup == 1 {
+			ClearScreen()
+			fmt.Println("\033[31m\033[1m Giving up the game.\033[0m")
+			os.Exit(0)
+		} else {
+			IsDead(p)
+		}
+	} else {
+		p.Gold -= p.Gold * 75 / 100
+		p.HP = p.HPmax / 2
+		p.Inventory = map[string]int{}
+		Menu(p)
+		fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")
+	}
 }
 
 type EquipmentStats struct {
