@@ -56,16 +56,17 @@ func Menu(p *Player) {
 			ClearScreen()
 			var surexit int
 			fmt.Println("\033[33m\033[1m ⚠ Are you sure to exiting the game.\033[0m")
-			fmt.Println("\033[32m\033[1m1 - Resume.\033[0m")
-			fmt.Println("\033[31m\033[1m2 - Exit.\033[0m")
+			fmt.Println("\033[31m\033[1mExit\033[0m ➔  Enter 1")         //\033[31m\033[1m1\033[0m 	//\033[31m\033[1mExit.\033[0m")
+			fmt.Println("\033[32m\033[1mResume\033[0m ➔  Any other key") //\033[32m\033[1many other key\033[0m 	//\033[32m\033[1mResume.\033[0m")
 			fmt.Scan(&surexit)
 			switch surexit {
 			case 1:
-				Menu(p)
-			case 2:
 				ClearScreen()
 				fmt.Println("\033[31m\033[1mExiting the game.\033[0m")
 				os.Exit(0)
+
+			case 2:
+				Menu(p)
 			default:
 				fmt.Println("\033[37mInvalid choice, please try again.\033[0m")
 			}
