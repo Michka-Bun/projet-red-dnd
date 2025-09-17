@@ -310,12 +310,13 @@ func hpColor(p Player) string {
 func IsDead(p *Player) {
 	var Revive int
 	ClearScreen()
-	fmt.Println("\033[31m\033[1m Game Over.\033[0m")
+	fmt.Println("\033[31m\033[1m Game Over !\033[0m")
 	fmt.Println()
 	fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
 	fmt.Println("\033[32m\033[1m Revive \033[0m \t➔  Enter any other key")
 	fmt.Println("\033[38;5;208m ⚠ Reviving will delete your inventory and reduce your \033[33m\033[1mgolds\033[38;5;208m by 75%\033[0m")
 	fmt.Println("\033[38;5;208m ⚠ Your new balance will be :\033[1m", p.Gold-p.Gold*75/100, "\033[33m\033[1mgold(s)\033[0m")
+	fmt.Println("\033[32m You will keep all the rest\033[0m")
 	fmt.Scan(&Revive)
 	if Revive == 1 {
 		ClearScreen()
@@ -336,6 +337,7 @@ func IsDead(p *Player) {
 		p.Gold -= p.Gold * 75 / 100
 		p.HP = p.HPmax / 2
 		p.Inventory = map[string]int{}
+		p.PoisonEffect = 0
 		Menu(p)
 		fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")
 	}
