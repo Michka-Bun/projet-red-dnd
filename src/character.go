@@ -19,6 +19,7 @@ type Player struct {
 	Inventory     map[string]int
 	Skills        map[string]bool
 	PoisonEffect  int
+	UseHealPot    bool
 	Head          string
 	Body          string
 	Feet          string
@@ -67,10 +68,12 @@ func SetInfo() Player {
 	var inputClass string
 	var Class string
 	ComptInvalidClass := 1
-	for !(Class == "Warrior" || Class == "Mage") {
+	for !(Class == "Warrior" || Class == "Mage" || Class == "Viking" || Class == "Archer") {
 		fmt.Println("Choose your character's class:")
-		fmt.Println("1 - Warrior")
-		fmt.Println("2 - Mage")
+		fmt.Println("1 - Warrior") //faible contre piaf -25%
+		fmt.Println("2 - Mage")    //faible contre devourer
+		fmt.Println("3 - Viking")  //faible contre piaf
+		fmt.Println("4 - Archer")  //faible contre devoureur
 		fmt.Scan(&inputClass)
 		fmt.Println(strings.Repeat("\n", 21))
 
@@ -78,6 +81,10 @@ func SetInfo() Player {
 			Class = "Warrior"
 		} else if inputClass == "2" {
 			Class = "Mage"
+		} else if inputClass == "3" {
+			Class = "Viking"
+		} else if inputClass == "4" {
+			Class = "Archer"
 		} else {
 			fmt.Println("// Invalid Class // x", ComptInvalidClass)
 			ComptInvalidClass++
@@ -100,7 +107,16 @@ func SetInfo() Player {
 		HP = 75
 		BaseDamage = 10
 		InventorySlot = 10
-
+	} else if Class == "Viking" {
+		HPmax = 125
+		HP = 125
+		BaseDamage = 20
+		InventorySlot = 3
+	} else if Class == "Archer" {
+		HPmax = 100
+		HP = 100
+		BaseDamage = 15
+		InventorySlot = 5
 	}
 	Level = 1
 	Gold = 100
@@ -108,6 +124,7 @@ func SetInfo() Player {
 	Inventory = map[string]int{}
 	Skills = map[string]bool{"Punch": true}
 	var PoisonEffect int
+	var UseHealPot = false
 
 	//retour d'infos
 	fmt.Print("\033[2J\033[3J\033[H")
@@ -135,6 +152,7 @@ func SetInfo() Player {
 		Inventory:     Inventory,
 		Skills:        Skills,
 		PoisonEffect:  PoisonEffect,
+		UseHealPot:    UseHealPot,
 	}
 }
 
@@ -151,6 +169,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("Skills \t\t:\033[34m", FormatSkills(p.Skills), "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
 	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
+	fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
 }
 
 func AddItem(p *Player, name string, count int) bool {
@@ -257,11 +276,11 @@ func HPBar(p Player) string {
 func hpColor(p Player) string {
 	pct := p.HP * 100 / p.HPmax
 	if pct > 66 {
-		return "\033[32m\033[1m"
+		return "\033[32m\033[1m" //vert
 	} else if pct > 33 && pct <= 66 {
-		return "\033[33m\033[1m"
+		return "\033[33m\033[1m" //jaune
 	} else {
-		return "\033[31m\033[1m"
+		return "\033[31m\033[1m" //rouge
 	}
 }
 
