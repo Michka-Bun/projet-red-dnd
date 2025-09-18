@@ -46,7 +46,7 @@ func Menu(p *Player) {
 			ClearScreen()
 			fmt.Println("Inventory:")
 			fmt.Println("----------------")
-			AccessInventory(p)
+			AccessInventory(p, false, nil)
 		case 3:
 			lastMsg = "\033[33mShop selected.\033[0m"
 			AccessShop(p)
@@ -54,7 +54,7 @@ func Menu(p *Player) {
 			lastMsg = "\033[35mBlacksmith selected.\033[0m"
 			Blacksmith(p)
 		case 5:
-			FightMenu(*p)
+			FightUI(p)
 		case 6:
 			ClearScreen()
 			var surexit int
@@ -84,7 +84,7 @@ func Menu(p *Player) {
 	}
 }
 
-func AccessInventory(p *Player) {
+func AccessInventory(p *Player, inFight bool, m *Monster) {
 	lastMsg := ""
 	for {
 		ClearScreen()
@@ -142,7 +142,11 @@ func AccessInventory(p *Player) {
 			case "Health potion":
 				lastMsg = TakeHealPot(p)
 			case "Poison potion":
-				lastMsg = TakePoisonPot(p)
+				if inFight {
+					lastMsg = PoisonPot(p, m)
+				} else {
+					TakePoisonPot(p)
+				}
 			case "Spell book: Fireball":
 				if HasSkill(p, "Fireball") {
 					lastMsg = "You already know Fireball."
@@ -463,28 +467,59 @@ func Blacksmith(p *Player) {
 	}
 }
 
-func FightMenu(p Player) {
-	// isFighting := true
-	ClearScreen()
-	// DisplayMonsterInfo()
-	// DisplayInfo()
+func FightUI(p *Player) {
+	m := ChooseMonster()
+	for {
+		if p.HP <= 0 {
+			IsDead(p)
+			return
+		}
+		if m.HP <= 0 {
+			MonsterIsDead(p, m) // see note below to change signature to *Player
+			return
+		}
+		ClearScreen()
+		fmt.Println("--------------------")
+		fmt.Printf("You face: %s\n", m.Class)
+		DisplayMonsterInfo(m)
+		fmt.Println("--------------------")
+		DisplayInfoInFight(*p)
+		fmt.Println("--------------------")
+		acted := FightMenu(p, &m)
+		if !acted {
+			continue
+		}
+		if m.HP <= 0 {
+			MonsterIsDead(p, m)
+			return
+		}
+		// Monster turn
+		MonsterTurn(p, &m)
+		if p.HP <= 0 {
+			IsDead(p)
+			return
+		}
+		endOfRound(p, &m)
+	}
+}
 
+func FightMenu(p *Player, m *Monster) bool {
 	fmt.Println("Fight Menu:")
-	fmt.Println("-------------------")
 	fmt.Println("1. \033[31mAttack\033[0m")
 	fmt.Println("2. \033[32mInventory\033[0m")
-	fmt.Println("Choose an option: ")
-
+	fmt.Print("Choose an option: ")
 	var choice int
 	fmt.Scanln(&choice)
-
 	switch choice {
 	case 1:
-		Fight()
+		ChooseAttack(p, m)
+		return true
 	case 2:
-		AccessInventory(&p)
+		AccessInventory(p, true, m)
+		return true
 	default:
 		fmt.Println("Invalid choice, please try again.")
+		return false
 	}
 }
 

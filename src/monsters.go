@@ -74,14 +74,13 @@ func ChooseMonster() Monster {
 }
 
 func DisplayMonsterInfo(m Monster) {
-	fmt.Println("Informations on the monster:")
-	fmt.Println("------------------------------")
+	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", MonsterHPColor(m), m.HP, MonsterHPBar(m))
 	fmt.Println("Class \t\t:", m.Class)
-	fmt.Println("HP max \t\t:", m.HPmax)
 	fmt.Println("Base damage \t:", m.BaseDamage)
 	fmt.Println("Level \t\t:\033[36m\033[1m", m.Level, "\033[0m")
-	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", MonsterHPColor(m), m.HP, MonsterHPBar(m))
-	fmt.Println("Poison effect \t:", m.PoisonEffect, "\t turn(s) left")
+	if m.PoisonEffect > 0 {
+		fmt.Println("Poison effect \t:", m.PoisonEffect, "\t turn(s) left")
+	}
 }
 
 func MonsterHPBar(m Monster) string {
@@ -123,7 +122,7 @@ func MonsterHPColor(m Monster) string {
 	return "\033[31m" //rouge
 }
 
-func MonsterIsDead(p Player, m Monster) {
+func MonsterIsDead(p *Player, m Monster) {
 	ClearScreen()
 	var GoldWon, XPWon = 0, 0
 	if ((p.Class == "Warrior" || p.Class == "Viking") && m.Class == "Piaf") || ((p.Class == "Mage" || p.Class == "Archer") && m.Class == "Devourer") {
@@ -144,7 +143,7 @@ func MonsterIsDead(p Player, m Monster) {
 	p.Gold += GoldWon
 	p.XP += XPWon
 	if p.XP >= p.XPmax {
-		LevelUp(&p)
+		LevelUp(p)
 	}
 	fmt.Print("Press Enter to return to menu...")
 	var _pause byte
