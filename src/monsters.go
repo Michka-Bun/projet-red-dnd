@@ -27,7 +27,7 @@ func ChooseMonster() Monster {
 
 	//stats de classe(et Nom optionnel pour RP)
 	var HPmax, HP, Level, BaseDamage, DefenseTurnConter int
-	if Class == "Warrior" { //Compétence réduc dégats
+	if Class == "Warrior" { //Compétence réduc dégatset reduc de mana
 		HPmax = 250
 		HP = 250
 		BaseDamage = 15
@@ -47,7 +47,7 @@ func ChooseMonster() Monster {
 		HP = 200
 		BaseDamage = 10
 		Level = 1
-	} else if Class == "Devourer" { //Résistance contre Player Mage
+	} else if Class == "Devourer" { //Résistance contre Player Mage et archer
 		HPmax = 200
 		HP = 200
 		BaseDamage = 10

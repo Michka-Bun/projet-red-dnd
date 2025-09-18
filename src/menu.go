@@ -147,6 +147,8 @@ func AccessInventory(p *Player, inFight bool, m *Monster) {
 				} else {
 					TakePoisonPot(p)
 				}
+			case "Mana potion":
+				lastMsg = TakeManaPot(p)
 			case "Spell book: Fireball":
 				if HasSkill(p, "Fireball") {
 					lastMsg = "You already know Fireball."
@@ -248,17 +250,18 @@ func AccessShop(p *Player) {
 		if p.Inventory["Spell book: Fireball"] == 0 && !HasSkill(p, "Fireball") {
 			fmt.Println("3. Spell book \t: \033[34m\033[1mFireball\033[0m \t: \033[33m\033[1m25 \tgold\033[0m")
 		}
-		fmt.Println("4. Wolf fur \t\t\t: \033[33m\033[1m4 \tgold\033[0m")
-		fmt.Println("5. Troll leather \t\t: \033[33m\033[1m7 \tgold\033[0m")
-		fmt.Println("6. Boar leather \t\t: \033[33m\033[1m3 \tgold\033[0m")
-		fmt.Println("7. Crow feather \t\t: \033[33m\033[1m1 \tgold\033[0m")
+		fmt.Println("4. Mana potion \t\t\t: \033[33m\033[1m10 \tgold\033[0m")
+		fmt.Println("5. Wolf fur \t\t\t: \033[33m\033[1m4 \tgold\033[0m")
+		fmt.Println("6. Troll leather \t\t: \033[33m\033[1m7 \tgold\033[0m")
+		fmt.Println("7. Boar leather \t\t: \033[33m\033[1m3 \tgold\033[0m")
+		fmt.Println("8. Crow feather \t\t: \033[33m\033[1m1 \tgold\033[0m")
 		if p.BackpackLevel < maxBackpackLevel {
-			fmt.Println("8. Backpack upgrade \t\t: \033[33m\033[1m30 \tgold\033[0m")
+			fmt.Println("9. Backpack upgrade \t\t: \033[33m\033[1m30 \tgold\033[0m")
 		} else {
-			fmt.Println("8. \033[9mBackpack upgrade\033[0m \t\t: \033[31m\033[1mMAX CAPACITY REACHED\033[0m")
+			fmt.Println("9. \033[9mBackpack upgrade\033[0m \t\t: \033[31m\033[1mMAX CAPACITY REACHED\033[0m")
 		}
 		fmt.Println("-----------------------------------")
-		fmt.Println("9. Exit shop")
+		fmt.Println("10. Exit shop")
 		fmt.Print("Choose an option: ")
 
 		var choice int
@@ -315,6 +318,17 @@ func AccessShop(p *Player) {
 				lastMsg = "You don't have enough gold."
 			}
 		case 4:
+			if p.Gold >= 10 {
+				if AddItem(p, "Mana potion", 1) {
+					p.Gold -= 10
+					lastMsg = "You bought a Mana potion."
+				} else {
+					lastMsg = "Your backpack is full."
+				}
+			} else {
+				lastMsg = "You don't have enough gold."
+			}
+		case 5:
 			if p.Gold >= 4 {
 				if AddItem(p, "Wolf fur", 1) {
 					p.Gold -= 4
@@ -325,7 +339,7 @@ func AccessShop(p *Player) {
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
-		case 5:
+		case 6:
 			if p.Gold >= 7 {
 				if AddItem(p, "Troll leather", 1) {
 					p.Gold -= 7
@@ -336,7 +350,7 @@ func AccessShop(p *Player) {
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
-		case 6:
+		case 7:
 			if p.Gold >= 3 {
 				if AddItem(p, "Boar leather", 1) {
 					p.Gold -= 3
@@ -347,7 +361,7 @@ func AccessShop(p *Player) {
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
-		case 7:
+		case 8:
 			if p.Gold >= 1 {
 				if AddItem(p, "Crow feather", 1) {
 					p.Gold -= 1
@@ -358,7 +372,7 @@ func AccessShop(p *Player) {
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
-		case 8:
+		case 9:
 			if p.BackpackLevel >= maxBackpackLevel {
 				lastMsg = "Your backpack is already at maximum capacity."
 			} else if p.Gold >= 30 {
@@ -369,7 +383,7 @@ func AccessShop(p *Player) {
 			} else {
 				lastMsg = "You don't have enough gold."
 			}
-		case 9:
+		case 10:
 			ClearScreen()
 			fmt.Println("Exiting the shop.")
 			return
@@ -525,6 +539,8 @@ func FightMenu(p *Player, m *Monster) bool {
 		fmt.Println("\033[32m\033[1m Back\033[0m \t\t➔  Enter any other key")
 		fmt.Scan(&suregiveupfight)
 		if suregiveupfight == 1 {
+			p.PoisonEffect = -1
+			p.WeakeningTrunCount = -1
 			ClearScreen()
 			fmt.Println("\033[31m\033[1m Giving up the fight.\033[0m")
 			Menu(p)
