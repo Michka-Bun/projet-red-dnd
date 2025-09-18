@@ -131,6 +131,7 @@ func MonsterIsDead(p Player, m Monster) {
 		GoldWon = rand.Intn(10-5) + 5
 		XPWon = rand.Intn(33-27) + 27
 	}
+	m.PoisonEffect = 0
 	fmt.Println("Congratulation, you killed that monster !")
 	fmt.Println("You won :")
 	fmt.Println("-", GoldWon, "golds")
@@ -143,8 +144,4 @@ func MonsterIsDead(p Player, m Monster) {
 	fmt.Print("Press Enter to return to menu...")
 	var _pause byte
 	fmt.Scanf("%c", &_pause)
-
-	p.PoisonEffect = 0
-	Menu(&p)
-	fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")
 }
