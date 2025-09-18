@@ -507,6 +507,7 @@ func FightMenu(p *Player, m *Monster) bool {
 	fmt.Println("Fight Menu:")
 	fmt.Println("1. \033[31mAttack\033[0m")
 	fmt.Println("2. \033[32mInventory\033[0m")
+	fmt.Println("3. \033[31m\033[1mGive up\033[0m")
 	fmt.Print("Choose an option: ")
 	var choice int
 	fmt.Scanln(&choice)
@@ -516,6 +517,20 @@ func FightMenu(p *Player, m *Monster) bool {
 		return true
 	case 2:
 		AccessInventory(p, true, m)
+		return true
+	case 3:
+		var suregiveupfight int
+		fmt.Println("\033[38;5;820m ⚠ Are you sure you are giving up the figth ?\033[0m")
+		fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
+		fmt.Println("\033[32m\033[1m Back\033[0m \t\t➔  Enter any other key")
+		fmt.Scan(&suregiveupfight)
+		if suregiveupfight == 1 {
+			ClearScreen()
+			fmt.Println("\033[31m\033[1m Giving up the fight.\033[0m")
+			Menu(p)
+		} else {
+			FightMenu(p, m)
+		}
 		return true
 	default:
 		fmt.Println("Invalid choice, please try again.")

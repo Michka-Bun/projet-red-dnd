@@ -101,24 +101,24 @@ func SetInfo() Player {
 	var Inventory map[string]int
 	var Skills map[string]bool
 	if Class == "Warrior" {
-		HPmax = 100
-		HP = 100
-		BaseDamage = 15
+		HPmax = 150
+		HP = 150
+		BaseDamage = 25
 		InventorySlot = 5
 	} else if Class == "Mage" {
-		HPmax = 75
-		HP = 75
-		BaseDamage = 10
-		InventorySlot = 10
-	} else if Class == "Viking" {
-		HPmax = 125
-		HP = 125
-		BaseDamage = 20
-		InventorySlot = 3
-	} else if Class == "Archer" {
 		HPmax = 100
 		HP = 100
-		BaseDamage = 15
+		BaseDamage = 25
+		InventorySlot = 10
+	} else if Class == "Viking" {
+		HPmax = 175
+		HP = 175
+		BaseDamage = 30
+		InventorySlot = 3
+	} else if Class == "Archer" {
+		HPmax = 150
+		HP = 150
+		BaseDamage = 25
 		InventorySlot = 5
 	}
 	Level = 1
@@ -454,5 +454,8 @@ func DisplayInfoInFight(p Player) {
 	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
 	if p.PoisonEffect > 0 {
 		fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
+	}
+	if p.WeakeningTrunCount > 0 {
+		fmt.Println("Weakness effect :", p.WeakeningTrunCount, "\t turn(s) left")
 	}
 }
