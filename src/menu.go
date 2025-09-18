@@ -71,7 +71,7 @@ func Menu(p *Player) {
 				Menu(p)
 			}
 		case 7: // TEST TEMPORAIRE / A SUPPRIMER
-			p.XP += 27           //TEST
+			p.XP += 5000000      //TEST
 			if p.XP >= p.XPmax { //TEST
 				LevelUp(p) //TEST
 			} //TEST
