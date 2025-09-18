@@ -480,7 +480,7 @@ func FightMenu(p Player) {
 
 	switch choice {
 	case 1:
-		Attack()
+		Fight()
 	case 2:
 		AccessInventory(&p)
 	default:
