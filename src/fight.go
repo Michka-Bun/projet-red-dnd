@@ -1,9 +1,11 @@
 package dnd
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func Fight() {
-
+	ChooseMonster()
 }
 
 func Attack(p Player, m Monster) {
@@ -15,6 +17,8 @@ func Attack(p Player, m Monster) {
 	m.HP -= AttackDamage
 	if m.HP <= 0 {
 		MonsterIsDead(p, m)
+	} else {
+		Fight()
 	}
 }
 

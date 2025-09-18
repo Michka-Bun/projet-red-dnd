@@ -18,8 +18,13 @@ type Monster struct {
 }
 
 func ChooseMonster() Monster {
-	//Classe et stats de classe(et Nom optionnel pour RP)
+	// Choix de la classe
 	var Class string
+	ClassList := []string{"Warrior", "Mage", "Jester", "Piaf", "Devourer", "Boss"}
+	RandomIndex := rand.Intn(len(ClassList))
+	Class = ClassList[RandomIndex]
+
+	//stats de classe(et Nom optionnel pour RP)
 	var HPmax, HP, Level, BaseDamage int
 	if Class == "Warrior" { //Compétence réduc dégats
 		HPmax = 250
