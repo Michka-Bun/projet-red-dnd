@@ -32,6 +32,10 @@ func PoisonPot(p *Player, m *Monster) string {
 	if !RemoveItem(p, "Poison potion", 1) {
 		return "You don't have a Poison potion."
 	}
+	if m != nil {
+		m.PoisonEffect = 3
+		return "You poisoned the monster for 3 turns."
+	}
 	msg := ""
 	if p.PoisonEffect > 0 {
 		p.HP -= 15
@@ -39,15 +43,6 @@ func PoisonPot(p *Player, m *Monster) string {
 		msg = fmt.Sprintf("You took 15 HP damage from the poison, you have %d turn(s) left.", p.PoisonEffect)
 		if p.HP < 1 {
 			IsDead(p)
-		}
-	}
-	if m != nil && m.PoisonEffect > 0 {
-		m.HP -= 15
-		m.PoisonEffect--
-		if msg == "" {
-			msg = "The monster took 15 HP damage from the poison."
-		} else {
-			msg += " The monster took 15 HP damage from the poison."
 		}
 	}
 	if msg == "" {

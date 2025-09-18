@@ -179,7 +179,6 @@ func DisplayInfo(p Player) {
 	fmt.Println("Skills \t\t:\033[34m", FormatSkills(p.Skills), "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
 	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
-	fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
 }
 
 func LevelUp(p *Player) {
@@ -444,5 +443,16 @@ func removeEquipmentStats(p *Player, item string) {
 		if p.HP > p.HPmax {
 			p.HP = p.HPmax
 		}
+	}
+}
+
+func DisplayInfoInFight(p Player) {
+	fmt.Println("Informations on your character:")
+	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
+	fmt.Println("Name \t\t:\033[97m", p.Name, "\033[0m")
+	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
+	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
+	if p.PoisonEffect > 0 {
+		fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
 	}
 }
