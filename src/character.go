@@ -7,24 +7,25 @@ import (
 )
 
 type Player struct {
-	Name          string
-	Class         string
-	HPmax         int
-	HP            int
-	BaseDamage    int
-	Level         int
-	XP            int
-	XPmax         int
-	Gold          int
-	BackpackLevel int
-	InventorySlot int
-	Inventory     map[string]int
-	Skills        map[string]bool
-	PoisonEffect  int
-	UseHealPot    bool
-	Head          string
-	Body          string
-	Feet          string
+	Name               string
+	Class              string
+	HPmax              int
+	HP                 int
+	BaseDamage         int
+	Level              int
+	XP                 int
+	XPmax              int
+	Gold               int
+	BackpackLevel      int
+	InventorySlot      int
+	Inventory          map[string]int
+	Skills             map[string]bool
+	PoisonEffect       int
+	WeakeningTrunCount int
+	UseHealPot         bool
+	Head               string
+	Body               string
+	Feet               string
 }
 
 /*
@@ -128,6 +129,7 @@ func SetInfo() Player {
 	Inventory = map[string]int{}
 	Skills = map[string]bool{"Punch": true}
 	var PoisonEffect int
+	var WeakeningTrunCount int
 	var UseHealPot = false
 
 	//retour d'infos
@@ -144,21 +146,22 @@ func SetInfo() Player {
 	fmt.Println("Inventory items :", FormatInventory(Inventory))
 
 	return Player{
-		Name:          Name,
-		Class:         Class,
-		HPmax:         HPmax,
-		HP:            HP,
-		BaseDamage:    BaseDamage,
-		Level:         Level,
-		XP:            XP,
-		XPmax:         XPmax,
-		Gold:          Gold,
-		BackpackLevel: BackpackLevel,
-		InventorySlot: InventorySlot,
-		Inventory:     Inventory,
-		Skills:        Skills,
-		PoisonEffect:  PoisonEffect,
-		UseHealPot:    UseHealPot,
+		Name:               Name,
+		Class:              Class,
+		HPmax:              HPmax,
+		HP:                 HP,
+		BaseDamage:         BaseDamage,
+		Level:              Level,
+		XP:                 XP,
+		XPmax:              XPmax,
+		Gold:               Gold,
+		BackpackLevel:      BackpackLevel,
+		InventorySlot:      InventorySlot,
+		Inventory:          Inventory,
+		Skills:             Skills,
+		PoisonEffect:       PoisonEffect,
+		UseHealPot:         UseHealPot,
+		WeakeningTrunCount: WeakeningTrunCount,
 	}
 }
 
@@ -182,8 +185,8 @@ func LevelUp(p *Player) {
 	p.Level++
 	fmt.Println("Congratulations, you have \033[36m\033[1m leveled up \033[0m !")
 	fmt.Println("Your sats have increassed by \033[36m\033[1m 10% \033[0m")
-	p.HP += p.HP * 10 / 100
 	p.HPmax += p.HPmax * 10 / 100
+	p.HP = p.HPmax
 	p.BaseDamage += p.BaseDamage * 10 / 100
 	if p.XP == p.XPmax {
 		p.XP = 0
@@ -191,7 +194,12 @@ func LevelUp(p *Player) {
 		p.XP -= p.XPmax
 	}
 	p.XPmax += p.XPmax * 15 / 100
-	p.Gold += 10
+	p.Gold += 30
+	if p.Level == 100 {
+		ClearScreen()
+		fmt.Println("\033[34m\033[1mGo to sleep !\033[0m")
+		os.Exit(0)
+	}
 }
 
 func AddItem(p *Player, name string, count int) bool {

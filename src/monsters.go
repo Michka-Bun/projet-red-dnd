@@ -15,6 +15,7 @@ type Monster struct {
 	Level             int
 	PoisonEffect      int
 	MonsterUseHealPot bool
+	DefenseTurnConter int
 }
 
 func ChooseMonster() Monster {
@@ -25,7 +26,7 @@ func ChooseMonster() Monster {
 	Class = ClassList[RandomIndex]
 
 	//stats de classe(et Nom optionnel pour RP)
-	var HPmax, HP, Level, BaseDamage int
+	var HPmax, HP, Level, BaseDamage, DefenseTurnConter int
 	if Class == "Warrior" { //Compétence réduc dégats
 		HPmax = 250
 		HP = 250
@@ -70,6 +71,7 @@ func ChooseMonster() Monster {
 		PoisonEffect:      PoisonEffect,
 		BaseDamage:        BaseDamage,
 		MonsterUseHealPot: MonsterUseHealPot,
+		DefenseTurnConter: DefenseTurnConter,
 	}
 }
 
