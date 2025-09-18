@@ -2,6 +2,7 @@ package dnd
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
@@ -115,4 +116,35 @@ func MonsterHPColor(m Monster) string {
 		return "\033[33m" //jaune
 	}
 	return "\033[31m" //rouge
+}
+
+func MonsterIsDead(p Player, m Monster) {
+	ClearScreen()
+	var GoldWon, XPWon = 0, 0
+	if ((p.Class == "Warrior" || p.Class == "Viking") && m.Class == "Piaf") || ((p.Class == "Mage" || p.Class == "Archer") && m.Class == "Devourer") {
+		GoldWon = rand.Intn(20-15) + 15
+		XPWon = rand.Intn(55-45) + 45
+	} else if m.Class == "Boss" {
+		GoldWon = rand.Intn(35-30) + 30
+		XPWon = rand.Intn(95-80) + 80
+	} else {
+		GoldWon = rand.Intn(10-5) + 5
+		XPWon = rand.Intn(33-27) + 27
+	}
+	fmt.Println("Congratulation, you killed that monster !")
+	fmt.Println("You won :")
+	fmt.Println("-", GoldWon, "golds")
+	fmt.Println("-", XPWon, "XP")
+	p.Gold += GoldWon
+	p.XP += XPWon
+	if p.XP >= p.XPmax {
+		LevelUp(&p)
+	}
+	fmt.Print("Press Enter to return to menu...")
+	var _pause byte
+	fmt.Scanf("%c", &_pause)
+
+	p.PoisonEffect = 0
+	Menu(&p)
+	fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")
 }
