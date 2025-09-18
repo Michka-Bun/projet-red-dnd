@@ -13,12 +13,15 @@ type Player struct {
 	HP            int
 	BaseDamage    int
 	Level         int
+	XP            int
+	XPmax         int
 	Gold          int
 	BackpackLevel int
 	InventorySlot int
 	Inventory     map[string]int
 	Skills        map[string]bool
 	PoisonEffect  int
+	UseHealPot    bool
 	Head          string
 	Body          string
 	Feet          string
@@ -67,10 +70,12 @@ func SetInfo() Player {
 	var inputClass string
 	var Class string
 	ComptInvalidClass := 1
-	for !(Class == "Warrior" || Class == "Mage") {
+	for !(Class == "Warrior" || Class == "Mage" || Class == "Viking" || Class == "Archer") {
 		fmt.Println("Choose your character's class:")
-		fmt.Println("1 - Warrior")
-		fmt.Println("2 - Mage")
+		fmt.Println("1 - Warrior") //faible contre piaf -25%
+		fmt.Println("2 - Mage")    //faible contre devourer
+		fmt.Println("3 - Viking")  //faible contre piaf
+		fmt.Println("4 - Archer")  //faible contre devoureur
 		fmt.Scan(&inputClass)
 		fmt.Println(strings.Repeat("\n", 21))
 
@@ -78,6 +83,10 @@ func SetInfo() Player {
 			Class = "Warrior"
 		} else if inputClass == "2" {
 			Class = "Mage"
+		} else if inputClass == "3" {
+			Class = "Viking"
+		} else if inputClass == "4" {
+			Class = "Archer"
 		} else {
 			fmt.Println("// Invalid Class // x", ComptInvalidClass)
 			ComptInvalidClass++
@@ -85,7 +94,7 @@ func SetInfo() Player {
 	}
 
 	//stats en fonction de la classe
-	var HPmax, HP, Level, BaseDamage int
+	var HPmax, HP, Level, XP, XPmax, BaseDamage int
 	var Gold int
 	var InventorySlot int
 	var Inventory map[string]int
@@ -100,14 +109,26 @@ func SetInfo() Player {
 		HP = 75
 		BaseDamage = 10
 		InventorySlot = 10
-
+	} else if Class == "Viking" {
+		HPmax = 125
+		HP = 125
+		BaseDamage = 20
+		InventorySlot = 3
+	} else if Class == "Archer" {
+		HPmax = 100
+		HP = 100
+		BaseDamage = 15
+		InventorySlot = 5
 	}
 	Level = 1
+	XP = 0
+	XPmax = 100
 	Gold = 100
 	BackpackLevel := 1
 	Inventory = map[string]int{}
 	Skills = map[string]bool{"Punch": true}
 	var PoisonEffect int
+	var UseHealPot = false
 
 	//retour d'infos
 	fmt.Print("\033[2J\033[3J\033[H")
@@ -115,7 +136,7 @@ func SetInfo() Player {
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
 	fmt.Println("HP \t\t:", HP, "/", HPmax)
-	fmt.Println("Base damage \t\t:", BaseDamage)
+	fmt.Println("Base damage \t:", BaseDamage)
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
 	fmt.Println("Backpack :",
@@ -129,12 +150,15 @@ func SetInfo() Player {
 		HP:            HP,
 		BaseDamage:    BaseDamage,
 		Level:         Level,
+		XP:            XP,
+		XPmax:         XPmax,
 		Gold:          Gold,
 		BackpackLevel: BackpackLevel,
 		InventorySlot: InventorySlot,
 		Inventory:     Inventory,
 		Skills:        Skills,
 		PoisonEffect:  PoisonEffect,
+		UseHealPot:    UseHealPot,
 	}
 }
 
@@ -144,13 +168,31 @@ func DisplayInfo(p Player) {
 	fmt.Println("Name \t\t:\033[97m", p.Name, "\033[0m")
 	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
 	fmt.Println("HP max \t\t:\033[97m", p.HPmax, "\033[0m")
-	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m")
-	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold\033[0m")
+	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
+	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m with\033[36m\033[1m", p.XP, "/", p.XPmax, "\033[0mXP")
+	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold(s)\033[0m")
 	fmt.Println("Backpack \t:",
-		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, countItems(p.Inventory), p.InventorySlot))
-	fmt.Println("Skills \t\t:\033[34m", formatSkills(p.Skills), "\033[0m")
+		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
+	fmt.Println("Skills \t\t:\033[34m", FormatSkills(p.Skills), "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
 	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
+	fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
+}
+
+func LevelUp(p *Player) {
+	p.Level++
+	fmt.Println("Congratulations, you have \033[36m\033[1m leveled up \033[0m !")
+	fmt.Println("Your sats have increassed by \033[36m\033[1m 10% \033[0m")
+	p.HP += p.HP * 10 / 100
+	p.HPmax += p.HPmax * 10 / 100
+	p.BaseDamage += p.BaseDamage * 10 / 100
+	if p.XP == p.XPmax {
+		p.XP = 0
+	} else if p.XP > p.XPmax {
+		p.XP -= p.XPmax
+	}
+	p.XPmax += p.XPmax * 15 / 100
+	p.Gold += 10
 }
 
 func AddItem(p *Player, name string, count int) bool {
@@ -187,7 +229,7 @@ func RemoveItem(p *Player, name string, count int) bool {
 	return true
 }
 
-func formatInventory(inv map[string]int) string {
+func FormatInventory(inv map[string]int) string {
 	if len(inv) == 0 {
 		return "[]"
 	}
@@ -204,7 +246,7 @@ func formatInventory(inv map[string]int) string {
 	return s
 }
 
-func formatSkills(sk map[string]bool) string {
+func FormatSkills(sk map[string]bool) string {
 	if len(sk) == 0 {
 		return "[]"
 	}
@@ -221,7 +263,7 @@ func formatSkills(sk map[string]bool) string {
 	return s
 }
 
-func countItems(inv map[string]int) int {
+func CountItems(inv map[string]int) int {
 	total := 0
 	for _, c := range inv {
 		total += c
@@ -257,22 +299,66 @@ func HPBar(p Player) string {
 func hpColor(p Player) string {
 	pct := p.HP * 100 / p.HPmax
 	if pct > 66 {
-		return "\033[32m\033[1m"
+		return "\033[32m\033[1m" //vert
 	} else if pct > 33 && pct <= 66 {
-		return "\033[33m\033[1m"
+		return "\033[33m\033[1m" //jaune
 	} else {
-		return "\033[31m\033[1m"
+		return "\033[31m\033[1m" //rouge
 	}
 }
 
-func IsDead() {
+func IsDead(p *Player) {
+	var Revive int
 	ClearScreen()
-	fmt.Println(`\033[31mGame Over.\033[0m`)
+	fmt.Println("\033[31m\033[1m Game Over !\033[0m")
 	fmt.Println()
-	fmt.Print("Press Enter to return to menu...")
-	var _pause byte
-	fmt.Scanf("%c", &_pause)
-	os.Exit(0)
+	fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
+	fmt.Println("\033[32m\033[1m Revive \033[0m \t➔  Enter any other key")
+	fmt.Println("\033[38;5;208m ⚠ Reviving will delete your inventory and reduce your \033[33m\033[1mgolds\033[38;5;208m by 75%\033[0m")
+	fmt.Println("\033[38;5;208m ⚠ Your new balance will be :\033[1m", p.Gold-p.Gold*75/100, "\033[33m\033[1mgold(s)\033[0m")
+	fmt.Println("\033[32m You will keep all the rest\033[0m")
+	fmt.Scan(&Revive)
+	if Revive == 1 {
+		ClearScreen()
+		var suregiveup int
+		fmt.Println("\033[38;5;820m ⚠ Are you sure you are giving up ?\033[0m")
+		fmt.Println("\033[38;5;208m ⚠ Your progress will be deleted !\033[0m")
+		fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
+		fmt.Println("\033[32m\033[1m Back\033[0m \t\t➔  Enter any other key")
+		fmt.Scan(&suregiveup)
+		if suregiveup == 1 {
+			ClearScreen()
+			fmt.Println("\033[31m\033[1m Giving up the game.\033[0m")
+			os.Exit(0)
+		} else {
+			IsDead(p)
+		}
+	} else {
+		p.Gold -= p.Gold * 75 / 100
+		p.HP = p.HPmax / 2
+		p.Inventory = map[string]int{}
+		if p.Head != "" {
+			switch p.Head {
+			case "Adventurer's hat":
+				p.HPmax -= 10
+			}
+		}
+		if p.Body != "" {
+			switch p.Body {
+			case "Adventurer's tunic":
+				p.HPmax -= 25
+			}
+		}
+		if p.Feet != "" {
+			switch p.Feet {
+			case "Adventurer's boots":
+				p.HPmax -= 15
+			}
+		}
+		p.PoisonEffect = 0
+		Menu(p)
+		fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")
+	}
 }
 
 type EquipmentStats struct {

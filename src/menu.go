@@ -21,8 +21,9 @@ func Menu(p *Player) {
 		fmt.Println("\033[36m1. Character info\033[0m")
 		fmt.Println("\033[32m2. Inventory\033[0m")
 		fmt.Println("\033[33m3. Shop\033[0m")
-		fmt.Println("\033[35m4. Blacksmith\033[0m")
-		fmt.Println("\033[31m5. Exit\033[0m")
+		fmt.Println("\033[38;5;208m4. Blacksmith\033[0m")
+		fmt.Println("\033[35m5. Fight\033[0m")
+		fmt.Println("\033[31m6. Exit\033[0m")
 		fmt.Print("Choose an option: ")
 
 		var choice int
@@ -53,11 +54,32 @@ func Menu(p *Player) {
 			lastMsg = "\033[35mBlacksmith selected.\033[0m"
 			Blacksmith(p)
 		case 5:
+			FightMenu(*p)
+		case 6:
 			ClearScreen()
-			fmt.Println("\033[31m\033[1mExiting the game.\033[0m")
-			os.Exit(0)
+			var surexit int
+			fmt.Println("\033[38;5;208m ⚠ Are you sure to exiting the game ?\033[0m")
+			fmt.Println("\033[38;5;208m ⚠ Your progress will be deleted !\033[0m")
+			fmt.Println("\033[31m\033[1m Exit\033[0m \t\t➔  Enter 1")
+			fmt.Println("\033[32m\033[1m Resume\033[0m \t➔  Enter any other key")
+			fmt.Scan(&surexit)
+			if surexit == 1 {
+				ClearScreen()
+				fmt.Println("\033[31m\033[1mExiting the game.\033[0m")
+				os.Exit(0)
+			} else {
+				Menu(p)
+			}
+		case 7: // TEST TEMPORAIRE / A SUPPRIMER
+			p.XP += 27           //TEST
+			if p.XP >= p.XPmax { //TEST
+				LevelUp(p) //TEST
+			} //TEST
+		case 8: // TEST TEMPORAIRE / A SUPPRIMER
+			IsDead(p) //TEST
+
 		default:
-			lastMsg = "\033[37mInvalid choice, please try again.\033[0m"
+			fmt.Println("\033[37mInvalid choice, please try again.\033[0m")
 		}
 	}
 }
@@ -441,11 +463,11 @@ func Blacksmith(p *Player) {
 	}
 }
 
-func FightMenu() {
+func FightMenu(p Player) {
 	// isFighting := true
 	ClearScreen()
-	// displayEnemyInfo()
-	// displayPlayerInfo()
+	// DisplayMonsterInfo()
+	// DisplayInfo()
 
 	fmt.Println("Fight Menu:")
 	fmt.Println("-------------------")
@@ -458,9 +480,9 @@ func FightMenu() {
 
 	switch choice {
 	case 1:
-		//attack()
+		Fight()
 	case 2:
-		// accessInventory()
+		AccessInventory(&p)
 	default:
 		fmt.Println("Invalid choice, please try again.")
 	}

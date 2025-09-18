@@ -38,7 +38,7 @@ func PoisonPot(p *Player, m *Monster) string {
 		p.PoisonEffect--
 		msg = fmt.Sprintf("You took 15 HP damage from the poison, you have %d turn(s) left.", p.PoisonEffect)
 		if p.HP < 1 {
-			IsDead()
+			IsDead(p)
 		}
 	}
 	if m != nil && m.PoisonEffect > 0 {
@@ -65,7 +65,7 @@ func TakePoisonPot(p *Player) string {
 	}
 	p.HP -= 30
 	if p.HP < 1 {
-		IsDead()
+		IsDead(p)
 	}
 	return fmt.Sprintf("You did a bit of self-sabotage and drank a Poison potion. You took \033[31m30 damage\033[0m. Your health is now %d/%d.", p.HP, p.HPmax)
 }
