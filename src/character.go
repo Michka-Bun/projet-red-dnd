@@ -169,7 +169,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
 	fmt.Println("HP max \t\t:\033[97m", p.HPmax, "\033[0m")
 	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
-	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m with :\033[36m\033[1m", p.XP, "/", p.XPmax, "\033[0m XP")
+	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m with\033[36m\033[1m", p.XP, "/", p.XPmax, "\033[0mXP")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold(s)\033[0m")
 	fmt.Println("Backpack \t:",
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
@@ -321,7 +321,7 @@ func IsDead(p *Player) {
 	if Revive == 1 {
 		ClearScreen()
 		var suregiveup int
-		fmt.Println("\033[38;5;208m ⚠ Are you sure you are giving up ?\033[0m")
+		fmt.Println("\033[38;5;820m ⚠ Are you sure you are giving up ?\033[0m")
 		fmt.Println("\033[38;5;208m ⚠ Your progress will be deleted !\033[0m")
 		fmt.Println("\033[31m\033[1m Give up\033[0m \t➔  Enter 1")
 		fmt.Println("\033[32m\033[1m Back\033[0m \t\t➔  Enter any other key")
@@ -337,6 +337,24 @@ func IsDead(p *Player) {
 		p.Gold -= p.Gold * 75 / 100
 		p.HP = p.HPmax / 2
 		p.Inventory = map[string]int{}
+		if p.Head != "" {
+			switch p.Head {
+			case "Adventurer's hat":
+				p.HPmax -= 10
+			}
+		}
+		if p.Body != "" {
+			switch p.Body {
+			case "Adventurer's tunic":
+				p.HPmax -= 25
+			}
+		}
+		if p.Feet != "" {
+			switch p.Feet {
+			case "Adventurer's boots":
+				p.HPmax -= 15
+			}
+		}
 		p.PoisonEffect = 0
 		Menu(p)
 		fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")

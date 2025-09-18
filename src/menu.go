@@ -21,8 +21,9 @@ func Menu(p *Player) {
 		fmt.Println("\033[36m1. Character info\033[0m")
 		fmt.Println("\033[32m2. Inventory\033[0m")
 		fmt.Println("\033[33m3. Shop\033[0m")
-		fmt.Println("\033[35m4. Blacksmith\033[0m")
-		fmt.Println("\033[31m5. Exit\033[0m")
+		fmt.Println("\033[38;5;208m4. Blacksmith\033[0m")
+		fmt.Println("\033[35m5. Fight\033[0m")
+		fmt.Println("\033[31m6. Exit\033[0m")
 		fmt.Print("Choose an option: ")
 
 		var choice int
@@ -53,6 +54,8 @@ func Menu(p *Player) {
 			lastMsg = "\033[35mBlacksmith selected.\033[0m"
 			Blacksmith(p)
 		case 5:
+			FightMenu(*p)
+		case 6:
 			ClearScreen()
 			var surexit int
 			fmt.Println("\033[38;5;208m ⚠ Are you sure to exiting the game ?\033[0m")
@@ -67,12 +70,12 @@ func Menu(p *Player) {
 			} else {
 				Menu(p)
 			}
-		case 6: // TEST TEMPORAIRE / A SUPPRIMER
+		case 7: // TEST TEMPORAIRE / A SUPPRIMER
 			p.XP += 27           //TEST
 			if p.XP >= p.XPmax { //TEST
 				LevelUp(p) //TEST
 			} //TEST
-		case 7: // TEST TEMPORAIRE / A SUPPRIMER
+		case 8: // TEST TEMPORAIRE / A SUPPRIMER
 			IsDead(p) //TEST
 
 		default:
@@ -460,11 +463,11 @@ func Blacksmith(p *Player) {
 	}
 }
 
-func FightMenu() {
+func FightMenu(p Player) {
 	// isFighting := true
 	ClearScreen()
-	// displayEnemyInfo()
-	// displayPlayerInfo()
+	// DisplayMonsterInfo()
+	// DisplayInfo()
 
 	fmt.Println("Fight Menu:")
 	fmt.Println("-------------------")
@@ -479,7 +482,7 @@ func FightMenu() {
 	case 1:
 		//attack()
 	case 2:
-		// accessInventory()
+		AccessInventory(&p)
 	default:
 		fmt.Println("Invalid choice, please try again.")
 	}
