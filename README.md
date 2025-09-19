@@ -1,8 +1,27 @@
-# R-E-D&D
+<div align="center">
 
-[![Go](https://img.shields.io/badge/Go-latest-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+<h1>⚔️ R-E-D&amp;D</h1>
 
-## Table of Contents
+<a href="https://go.dev/">
+  <img alt="Go" src="https://img.shields.io/badge/Go-latest-00ADD8?logo=go&logoColor=white" />
+</a>
+
+<p><em>Un RPG minimaliste en ligne de commande, écrit en Go, pour apprendre et pratiquer la programmation.</em></p>
+
+<p>
+  <kbd>CLI</kbd>
+  <kbd>Turn-Based</kbd>
+  <kbd>Single-Player</kbd>
+  <kbd>No Third-Party Modules</kbd>
+</p>
+
+</div>
+
+---
+
+<details>
+  <summary><strong>📑 Table of Contents (cliquer pour dérouler)</strong></summary>
+
 - [Description](#-description)
   - [Gameplay](#-gameplay-vue-densemble)
 - [Fonctionnalités de gameplay](#-fonctionnalités-de-gameplay)
@@ -11,46 +30,98 @@
 - [Structure du projet](#-structure-du-projet)
 - [Contributeurs](#-contributeurs)
 
+</details>
+
 ---
 
 ## 📝 Description
-**R-E-D&D** est un **jeu RPG minimaliste en ligne de commande** écrit en Go. Il sert de terrain d’entraînement pour consolider ses bases de programmation tout en proposant une boucle de jeu claire : création de personnage, exploration menu-driven, gestion d’inventaire/équipement, et combats au tour par tour avec effets d’état.
+> **R-E-D&amp;D** est un **RPG minimaliste** en **ligne de commande**.  
+> Il sert de terrain d’entraînement pour consolider ses bases de programmation tout en proposant une boucle de jeu claire :  
+> **création de personnage**, **exploration par menus**, **inventaire/équipement**, et **combats au tour par tour** avec **effets d’état**.
 
 ---
 
 ### 🎮 Gameplay (vue d’ensemble)
-- **Création de personnage** : choix du nom et de la **classe** parmi *Warrior*, *Mage*, *Viking* et *Archer*.  
-- **Menu principal** : accéder à la fiche perso, gérer l’inventaire, visiter le **Shop** (achat) et le **Blacksmith** (améliorations/équipement), ou lancer des **combats**.  
-- **Combats au tour par tour** : affrontements textuels avec **faiblesses**/résistances selon les types d’ennemis et la classe du joueur. Gestion des **HP**, **Mana**, **compétences**, **objets** (potions), et **effets d’état** (ex. **Poison** qui inflige des dégâts sur plusieurs tours).  
-- **Progression** : montée de niveau (*LevelUp*), amélioration des statistiques, gestion d’**équipement** (bonus via `EquipmentStats`), et optimisation du build via le forgeron et les achats.
+- **Création de personnage** : nom + **classe** parmi *Warrior*, *Mage*, *Viking* et *Archer*.  
+- **Menu principal** : fiche perso, **Inventory**, **Shop**, **Blacksmith**, **Fight**.  
+- **Combat au tour par tour** : ennemis avec **faiblesses/résistances**, gestion **HP/Mana**, **compétences** et **objets** (potions), **Poison** sur plusieurs tours, etc.  
+- **Progression** : **LevelUp**, statistiques, **équipement** (bonus via `EquipmentStats`), optimisation via forgeron et achats.
+
+> Aperçu (extrait CLI)
+> ```text
+> --------------------
+> Menu:
+> 1. Character info
+> 2. Inventory
+> 3. Shop
+> 4. Blacksmith
+> 5. Fight
+> 6. Exit
+> Choose an option:
+> ```
 
 ---
 
 ## ✨ Fonctionnalités de gameplay
-- **Classes jouables** : *Warrior*, *Mage*, *Viking*, *Archer* — chacune interagit différemment avec certains ennemis (faiblesses/avantages thématiques).
-- **Bestiaire & faiblesses** : plusieurs **monstres** avec comportements/valeurs distincts et **faiblesses de type** (pénalités/bonus en fonction de la classe ou de la nature de l’ennemi).
-- **Système de combat** :
-  - **Tour par tour** avec choix entre **attaques**, **compétences** (consomment du **Mana**), **objets** et **équipement**.
-  - **Effets d’état** : **Poison** (dégâts récurrents sur N tours), autres variations selon compétences/ennemis.
-  - **Mort & checks** : gestion de l’état de mort via `IsDead`, affichages d’alertes, barres **HP/Mana** avec mise en forme ANSI.
-- **Inventaire & objets** :
-  - **Potions** : **Health potion** (régénère des HP), **Mana potion** (régénère du Mana), **Poison potion** (appliquée à l’ennemi ou auto-effet si mal utilisée).
-  - Ajout/consommation (`AddItem` / `RemoveItem`) et affichage propre (`FormatInventory`).
-- **Équipement & stats** :
-  - **Équiper/Déséquiper** avec `EquipItem`/`UnequipItem` et application des **bonus** via `EquipmentStats`.
-  - Progression des **HPmax/Manamax**, **dégâts**, etc., via **niveaux** et **forge**.
-- **Économie & services** :
-  - **Shop** : achat de potions/équipement.
-  - **Blacksmith** : amélioration/gestion de l’équipement.
-- **Interface CLI** :
-  - **Menu clair** (fiche perso, inventaire, shop, blacksmith, combat).
-  - **Barres de vie/mana** (`HPBar`, `ManaBar`) et messages colorés pour la lisibilité.
+<div>
+
+### Classes & faiblesses
+<table>
+  <thead>
+    <tr>
+      <th align="left">Classe</th>
+      <th align="left">Style</th>
+      <th align="left">Faiblesse thématique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🛡️ Warrior</td>
+      <td>Frontline, tanking et coups directs</td>
+      <td><kbd>Weak vs Piaf</kbd></td>
+    </tr>
+    <tr>
+      <td>🧙 Mage</td>
+      <td>Dégâts magiques, gestion de Mana</td>
+      <td><kbd>Weak vs Devourer</kbd></td>
+    </tr>
+    <tr>
+      <td>🪓 Viking</td>
+      <td>Brutal, HP élevés, impact soutenu</td>
+      <td><kbd>Weak vs Piaf</kbd></td>
+    </tr>
+    <tr>
+      <td>🏹 Archer</td>
+      <td>DPS à distance, gestion des ressources</td>
+      <td><kbd>Weak vs Devourer</kbd></td>
+    </tr>
+  </tbody>
+</table>
+
+### Système de combat
+- **Tour par tour** : choisir entre **attaques**, **compétences**, **objets**, **équipement**.
+- **Effets d’état** : ex. **Poison** (dégâts récurrents sur N tours).  
+- **Barres** : `HPBar` / `ManaBar` (affichage ANSI coloré).  
+- **Checks de mort** : `IsDead` et messages d’alerte clairs.
+
+### Inventaire & objets
+- **Potions** : Vie (**Health**), **Mana**, **Poison**.  
+- **Gestion** : `AddItem`, `RemoveItem`, affichage soigné (`FormatInventory`).
+- **Utilisation contextuelle** : effets appliqués au joueur et/ou au monstre selon l’objet.
+
+### Équipement & progression
+- **Équiper/Déséquiper** : `EquipItem`, `UnequipItem`.  
+- **Bonus** : via `EquipmentStats` (ex. HPmax/Manamax, dégâts).  
+- **Économie** : **Shop** (achat) et **Blacksmith** (améliorations).
+
+</div>
 
 ---
 
 ## 🛠️ Stack
-- **Langage** : Go (dernière version)
-- **Bibliothèques standard** : `fmt`, `os`, `strings`, `math`, `sort`
+- **Langage** : Go (**dernière version**)
+- **Standard library** : `fmt`, `os`, `strings`, `math`, `sort`  
+- **Modules tiers** : *aucun*
 
 ---
 
@@ -77,6 +148,9 @@ src/
 
 ---
 
-## 👥 Contributeurs
-- Thibaud SELLIER
-- Michel LEVINE
+<div align="center">
+👥 Contributeurs
+
+<strong>Thibaud SELLIER</strong> • <strong>Michel LEVINE</strong>
+
+</div>
