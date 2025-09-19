@@ -16,6 +16,8 @@ type Player struct {
 	XP                 int
 	XPmax              int
 	Gold               int
+	Mana               int
+	Manamax            int
 	BackpackLevel      int
 	InventorySlot      int
 	Inventory          map[string]int
@@ -95,30 +97,38 @@ func SetInfo() Player {
 	}
 
 	//stats en fonction de la classe
-	var HPmax, HP, Level, XP, XPmax, BaseDamage int
+	var HPmax, HP, Level, XP, XPmax, BaseDamage, Mana, Manamax int
 	var Gold int
 	var InventorySlot int
 	var Inventory map[string]int
 	var Skills map[string]bool
 	if Class == "Warrior" {
-		HPmax = 100
-		HP = 100
-		BaseDamage = 15
+		HPmax = 150
+		HP = 150
+		Manamax = 100
+		Mana = 100
+		BaseDamage = 25
 		InventorySlot = 5
 	} else if Class == "Mage" {
-		HPmax = 75
-		HP = 75
-		BaseDamage = 10
-		InventorySlot = 10
-	} else if Class == "Viking" {
-		HPmax = 125
-		HP = 125
-		BaseDamage = 20
-		InventorySlot = 3
-	} else if Class == "Archer" {
 		HPmax = 100
 		HP = 100
-		BaseDamage = 15
+		Manamax = 250
+		Mana = 250
+		BaseDamage = 25
+		InventorySlot = 10
+	} else if Class == "Viking" {
+		HPmax = 175
+		HP = 175
+		Manamax = 50
+		Mana = 50
+		BaseDamage = 30
+		InventorySlot = 3
+	} else if Class == "Archer" {
+		HPmax = 150
+		HP = 150
+		Manamax = 200
+		Mana = 200
+		BaseDamage = 25
 		InventorySlot = 5
 	}
 	Level = 1
@@ -128,8 +138,8 @@ func SetInfo() Player {
 	BackpackLevel := 1
 	Inventory = map[string]int{}
 	Skills = map[string]bool{"Punch": true}
-	var PoisonEffect int
-	var WeakeningTrunCount int
+	var PoisonEffect = -1
+	var WeakeningTrunCount = -1
 	var UseHealPot = false
 
 	//retour d'infos
@@ -138,6 +148,7 @@ func SetInfo() Player {
 	fmt.Println("Name \t\t:", Name)
 	fmt.Println("Class \t\t:", Class)
 	fmt.Println("HP \t\t:", HP, "/", HPmax)
+	fmt.Println("Mana \t\t:", Mana, "/", Manamax)
 	fmt.Println("Base damage \t:", BaseDamage)
 	fmt.Println("Level \t\t:", Level)
 	fmt.Println("Gold \t\t:", Gold)
@@ -155,6 +166,8 @@ func SetInfo() Player {
 		XP:                 XP,
 		XPmax:              XPmax,
 		Gold:               Gold,
+		Mana:               Mana,
+		Manamax:            Manamax,
 		BackpackLevel:      BackpackLevel,
 		InventorySlot:      InventorySlot,
 		Inventory:          Inventory,
@@ -171,6 +184,7 @@ func DisplayInfo(p Player) {
 	fmt.Println("Name \t\t:\033[97m", p.Name, "\033[0m")
 	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
 	fmt.Println("HP max \t\t:\033[97m", p.HPmax, "\033[0m")
+	fmt.Println("Mana max \t\t:\033[97m", p.Manamax, "\033[0m")
 	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
 	fmt.Println("Level \t\t:\033[36m\033[1m", p.Level, "\033[0m with\033[36m\033[1m", p.XP, "/", p.XPmax, "\033[0mXP")
 	fmt.Println("Gold \t\t:\033[33m\033[1m", p.Gold, "gold(s)\033[0m")
@@ -178,6 +192,7 @@ func DisplayInfo(p Player) {
 		fmt.Sprintf("\033[36m\033[1mL%d \033[0m\t\t(%d/%d)\033[0m", p.BackpackLevel, CountItems(p.Inventory), p.InventorySlot))
 	fmt.Println("Skills \t\t:\033[34m", FormatSkills(p.Skills), "\033[0m")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
+	fmt.Printf("\nMana \t\t: \033[1m\033[34m%d\033[0m\t\t %s\n", p.Mana, ManaBar(p))
 	fmt.Println("\nEquipment \t: \tHead:\t\033[35m", p.Head, "\033[0m,\n \t\t\tBody:\t\033[35m", p.Body, "\033[0m,\n \t\t\tFeet:\t\033[35m", p.Feet, "\033[0m,")
 }
 
@@ -314,8 +329,29 @@ func hpColor(p Player) string {
 	}
 }
 
+func ManaBar(p Player) string {
+	barLength := 15
+	if p.Manamax <= 0 {
+		p.Manamax = 1
+	}
+	filled := int(float64(p.Mana) / float64(p.Manamax) * float64(barLength))
+	if filled < 0 {
+		filled = 0
+	}
+	if filled > barLength {
+		filled = barLength
+	}
+
+	bar := fmt.Sprintf("[%s%s]", strings.Repeat("█", filled), strings.Repeat(" ", barLength-filled))
+
+	color := "\033[34m" //rouge
+	return color + bar + "\033[0m"
+}
+
 func IsDead(p *Player) {
 	var Revive int
+	p.PoisonEffect = -1
+	p.WeakeningTrunCount = -1
 	ClearScreen()
 	fmt.Println("\033[31m\033[1m Game Over !\033[0m")
 	fmt.Println()
@@ -362,7 +398,6 @@ func IsDead(p *Player) {
 				p.HPmax -= 15
 			}
 		}
-		p.PoisonEffect = 0
 		Menu(p)
 		fmt.Println("\033[33m\033[1m You were resurrected.\033[0m")
 	}
@@ -449,10 +484,14 @@ func removeEquipmentStats(p *Player, item string) {
 func DisplayInfoInFight(p Player) {
 	fmt.Println("Informations on your character:")
 	fmt.Printf("\nHP \t\t: \033[1m%s%d\033[0m\t\t %s\n", hpColor(p), p.HP, HPBar(p))
+	fmt.Printf("\nMana \t\t: \033[1m\033[34m%d\033[0m\t\t %s\n", p.Mana, ManaBar(p))
 	fmt.Println("Name \t\t:\033[97m", p.Name, "\033[0m")
 	fmt.Println("Class \t\t:\033[97m", p.Class, "\033[0m")
 	fmt.Println("Base damage \t:\033[97m", p.BaseDamage, "\033[0m")
-	if p.PoisonEffect > 0 {
+	if p.PoisonEffect > -1 {
 		fmt.Println("Poison effect \t:", p.PoisonEffect, "\t turn(s) left")
+	}
+	if p.WeakeningTrunCount > -1 {
+		fmt.Println("Weakness effect :", p.WeakeningTrunCount, "\t turn(s) left")
 	}
 }

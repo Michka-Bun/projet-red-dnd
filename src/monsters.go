@@ -27,7 +27,7 @@ func ChooseMonster() Monster {
 
 	//stats de classe(et Nom optionnel pour RP)
 	var HPmax, HP, Level, BaseDamage, DefenseTurnConter int
-	if Class == "Warrior" { //Compétence réduc dégats
+	if Class == "Warrior" { //Compétence réduc dégatset reduc de mana
 		HPmax = 250
 		HP = 250
 		BaseDamage = 15
@@ -47,14 +47,14 @@ func ChooseMonster() Monster {
 		HP = 200
 		BaseDamage = 10
 		Level = 1
-	} else if Class == "Devourer" { //Résistance contre Player Mage
+	} else if Class == "Devourer" { //Résistance contre Player Mage et archer
 		HPmax = 200
 		HP = 200
 		BaseDamage = 10
 		Level = 1
 	} else if Class == "Boss" {
-		HPmax = 1000
-		HP = 1000
+		HPmax = 600
+		HP = 600
 		BaseDamage = 20
 		Level = 1
 	}
@@ -83,6 +83,7 @@ func DisplayMonsterInfo(m Monster) {
 	if m.PoisonEffect > 0 {
 		fmt.Println("Poison effect \t:", m.PoisonEffect, "\t turn(s) left")
 	}
+
 }
 
 func MonsterHPBar(m Monster) string {
@@ -116,7 +117,7 @@ func MonsterHPColor(m Monster) string {
 		return "\033[31m" //rouge
 	}
 	pct := m.HP * 100 / m.HPmax
-	if pct >= 66 {
+	if pct > 66 {
 		return "\033[32m" // vert
 	} else if pct > 33 && pct <= 66 {
 		return "\033[33m" //jaune
@@ -127,7 +128,7 @@ func MonsterHPColor(m Monster) string {
 func MonsterIsDead(p *Player, m Monster) {
 	ClearScreen()
 	var GoldWon, XPWon = 0, 0
-	if ((p.Class == "Warrior" || p.Class == "Viking") && m.Class == "Piaf") || ((p.Class == "Mage" || p.Class == "Archer") && m.Class == "Devourer") {
+	if m.Class == "Mage" || m.Class == "Warrior" {
 		GoldWon = rand.Intn(20-15) + 15
 		XPWon = rand.Intn(55-45) + 45
 	} else if m.Class == "Boss" {
