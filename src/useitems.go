@@ -64,3 +64,17 @@ func TakePoisonPot(p *Player) string {
 	}
 	return fmt.Sprintf("You did a bit of self-sabotage and drank a Poison potion. You took \033[31m30 damage\033[0m. Your health is now %d/%d.", p.HP, p.HPmax)
 }
+
+func TakeManaPot(p *Player) string {
+	if p == nil {
+		return ""
+	}
+	if !RemoveItem(p, "Mana potion", 1) {
+		return "You don't have a Mana potion."
+	}
+	p.Mana += 75
+	if p.Mana > p.Manamax {
+		p.Mana = p.Manamax
+	}
+	return fmt.Sprintf("You used a mana potion, you recovered 75 Mana")
+}
