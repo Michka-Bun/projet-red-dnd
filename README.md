@@ -147,9 +147,8 @@ src/
 
 ---
 
-<div align="center">
+
 ## 👥 Contributeurs
-
+<div align="center">
 <strong>Thibaud SELLIER</strong> • <strong>Michel LEVINE</strong>
-
 </div>
