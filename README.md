@@ -121,7 +121,6 @@
 ## 🛠️ Stack
 - **Langage** : Go (**dernière version**)
 - **Standard library** : `fmt`, `os`, `strings`, `math`, `sort`  
-- **Modules tiers** : *aucun*
 
 ---
 
